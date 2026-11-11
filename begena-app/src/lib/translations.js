@@ -35,10 +35,6 @@ export const translations = {
             titleLine2: 'I too shall praise like David!',
             description:
                 "The main goal of Enzira Online Begena School is to enable devotees at home and abroad to learn the ancient Begena instrument and pass it on to the next generation, expanding the reach of the service by producing qualified successor teachers.",
-            pill1: 'For Meditation',
-            pill2: 'Strengthen Spiritual Life',
-            pill3: 'Comfort from Sorrow',
-            pill4: 'Honor the Ark of the Covenant',
             feature1Title: 'Master the Three Tunings',
             feature1Desc:
                 'You will learn to play the Begena perfectly in the three main tunings: Salamta, Wanyun, and Silecherinetih.',
@@ -51,6 +47,16 @@ export const translations = {
             feature4Title: 'Extensive Hymn Practice',
             feature4Desc:
                 'We provide extensive practice with a wide range of hymns, ensuring you have the skill to play with complete mastery.',
+            scheduleBadge: 'Program Format',
+            scheduleTitle: 'Individual Plan',
+            scheduleSubtitle:
+                'Personalized one-on-one Begena instruction tailored to your pace and daily routine.',
+            scheduleItem1Title: '3 Days a Week',
+            scheduleItem1Desc: 'Three guided sessions each week',
+            scheduleItem2Title: '100% Online',
+            scheduleItem2Desc: 'Live classes from anywhere',
+            scheduleItem3Title: 'Flexible Schedule',
+            scheduleItem3Desc: 'Pick times that fit your day',
         },
         // Registration
         registration: {
@@ -181,6 +187,16 @@ export const translations = {
             feature4Title: 'በቂ የመዝሙራት ልምምድ።',
             feature4Desc:
                 'በቂ የመዝሙራት ልምምድ ይኖረናል፤ ይህም በገናን በተሟላ ክህሎት ለደርደር የሚያስችላችሁ ትምህርት አዘጋጅተናል።',
+            scheduleBadge: 'የስልጠና መርሐግብር',
+            scheduleTitle: 'የግል ስልጠና እቅድ',
+            scheduleSubtitle:
+                'ከእርስዎ የጊዜ ሰሌዳና ፍጥነት ጋር የተጣጣመ የግል የበገና ስልጠና።',
+            scheduleItem1Title: 'በሳምንት 3 ቀናት',
+            scheduleItem1Desc: 'ተከታታይ ሳምንታዊ ክፍለ-ጊዜያት',
+            scheduleItem2Title: 'ሙሉ በሙሉ ኦንላይን',
+            scheduleItem2Desc: 'ከየትኛውም ቦታ በቀጥታ ስርጭት',
+            scheduleItem3Title: 'ተለዋዋጭ የጊዜ ሰሌዳ',
+            scheduleItem3Desc: 'ከዕለት ተዕለት ፕሮግራምዎ ጋር የሚስማማ',
         },
         // Registration
         registration: {
