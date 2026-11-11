@@ -45,11 +45,12 @@ function App() {
                 <Hero />
                 <About />
                 <MarqueeGallery />
+                <Pricing />
                 <RegistrationForm />
                 <Footer />
               </>
             } />
-            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/status" element={<CheckStatus />} />

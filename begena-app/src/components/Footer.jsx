@@ -20,7 +20,7 @@ const Footer = () => {
 
     const quickLinks = [
         { name: t('footer.aboutArt'), to: '/#about', hash: 'about' },
-        { name: t('footer.pricing'), to: '/pricing' },
+        { name: t('footer.pricing'), to: '/#pricing', hash: 'pricing' },
         { name: t('footer.trainingModules'), to: '/#about', hash: 'about' },
         { name: t('footer.globalAdmissions'), to: '/#register', hash: 'register' },
     ];

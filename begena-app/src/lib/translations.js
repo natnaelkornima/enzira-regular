@@ -51,7 +51,6 @@ export const translations = {
         },
         // Pricing
         pricing: {
-            backToHome: 'Back to Home',
             badge: 'Training Plans',
             titleLine1: 'Choose Your',
             titleLine2: 'Begena Plan',
@@ -261,7 +260,6 @@ export const translations = {
         },
         // Pricing
         pricing: {
-            backToHome: 'ወደ ዋና ገጽ ተመለስ',
             badge: 'የክፍያ እቅዶች',
             titleLine1: 'የስልጠና',
             titleLine2: 'እቅድዎን ይምረጡ',

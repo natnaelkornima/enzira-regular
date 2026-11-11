@@ -31,7 +31,7 @@ const Navbar = () => {
     const navLinks = [
         { name: t('nav.home'), to: '/#home', hash: 'home' },
         { name: t('nav.about'), to: '/#about', hash: 'about' },
-        { name: t('nav.pricing'), to: '/pricing' },
+        { name: t('nav.pricing'), to: '/#pricing', hash: 'pricing' },
         { name: t('nav.training'), to: '/#register', hash: 'register' },
         { name: t('nav.contact'), to: '/#footer', hash: 'footer' },
     ];
