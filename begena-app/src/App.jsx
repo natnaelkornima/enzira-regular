@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from './lib/LanguageContext';
 import Navbar from './components/Navbar'
@@ -33,6 +33,8 @@ const ScrollManager = () => {
 };
 
 function App() {
+  const [selectedTierId, setSelectedTierId] = useState(null);
+
   return (
     <Router>
       <ScrollManager />
@@ -45,8 +47,8 @@ function App() {
                 <Hero />
                 <About />
                 <MarqueeGallery />
-                <Pricing />
-                <RegistrationForm />
+                <Pricing selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
+                <RegistrationForm selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
                 <Footer />
               </>
             } />

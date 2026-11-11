@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Phone, Send, Upload, CheckCircle, AlertCircle, Loader2, Globe, Sparkles, ArrowRight, ChevronDown, Search } from 'lucide-react';
+import { User, Users, Calendar, Phone, Send, Upload, CheckCircle, AlertCircle, Loader2, ArrowRight, ChevronDown, Search } from 'lucide-react';
 import SuccessModal from './SuccessModal';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { compressImage } from '../lib/imageUtils';
 import { useLanguage } from '../lib/LanguageContext';
+import { findPricingTier } from '../lib/translations';
 import telebirrLogo from '../assets/telebirr-logo.png';
 import cbeLogo from '../assets/cbe-logo.png';
 
@@ -85,8 +86,8 @@ const PaymentCard = ({ name, accountNumber, logo, color }) => {
     );
 };
 
-const RegistrationForm = () => {
-    const { t } = useLanguage();
+const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
+    const { t, language } = useLanguage();
     const [formData, setFormData] = useState({
         fullName: '',
         countryCode: '+251',
@@ -101,18 +102,26 @@ const RegistrationForm = () => {
     const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [step, setStep] = useState(1);
-    const [loadingLocation, setLoadingLocation] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    const isEthiopia = formData.countryCode === '+251';
+    const [pickerPlanKey, setPickerPlanKey] = useState('group');
+    const [isPlanPickerOpen, setIsPlanPickerOpen] = useState(false);
+
+    const selectedDetails = findPricingTier(language, selectedTierId);
+    const showPlanPicker = !selectedDetails || isPlanPickerOpen;
+    const planError = !selectedDetails ? errors.plan : '';
+    const pricingPlans = t('pricing.plans');
+    const pickerTiers = Array.isArray(pricingPlans?.[pickerPlanKey]?.tiers) ? pricingPlans[pickerPlanKey].tiers : [];
+    const selectedPlanSummary = selectedDetails
+        ? `${selectedDetails.plan.name} · ${selectedDetails.tier.duration} (${selectedDetails.tier.price} ${t('pricing.currency')} ${t('pricing.perMonth')})`
+        : '';
 
     const countryPickerRef = useRef(null);
 
-    // Fetch user's IP-based location to set fee structure (with safe timeouts & timezone fallback)
+    // Fetch user's IP-based location to preselect phone country code (with safe timeouts & timezone fallback)
     useEffect(() => {
         let isMounted = true;
 
         const detectLocation = async () => {
-            setLoadingLocation(true);
             let countryCode = '';
 
             const fetchWithTimeout = async (url, timeoutMs = 2500) => {
@@ -188,10 +197,6 @@ const RegistrationForm = () => {
                 }
             } catch {
                 // Silently fallback to default (+251 Ethiopia)
-            } finally {
-                if (isMounted) {
-                    setLoadingLocation(false);
-                }
             }
         };
 
@@ -290,7 +295,16 @@ const RegistrationForm = () => {
         }
         
         if (!formData.telegram.trim()) newErrors.telegram = t('registration.validation.telegram');
+        if (!selectedDetails) newErrors.plan = t('registration.validation.plan');
         return newErrors;
+    };
+
+    const handleTierSelect = (tierId) => {
+        onSelectPlanTier?.(tierId);
+        setIsPlanPickerOpen(false);
+        if (errors.plan) {
+            setErrors((prev) => ({ ...prev, plan: '' }));
+        }
     };
 
     const validateStep2 = () => {
@@ -397,6 +411,19 @@ const RegistrationForm = () => {
             // while maintaining full compatibility with legacy schemas.
             const fullPhone = `${formData.countryCode} ${formData.phoneNumber}`.trim();
             const candidatePayloads = [
+                // Option A1: Unified payload with selected plan
+                {
+                    name: formData.fullName,
+                    full_name: formData.fullName,
+                    phone_number: formData.phoneNumber,
+                    country_code: formData.countryCode,
+                    username: formData.telegram,
+                    telegram: formData.telegram,
+                    uploaded_screenshot: receiptFinalPath,
+                    payment_receipt_path: receiptFinalPath,
+                    plan: selectedPlanSummary,
+                    status: 'pending'
+                },
                 // Option A: Unified payload (populates both requested and legacy columns)
                 {
                     name: formData.fullName,
@@ -719,6 +746,108 @@ const RegistrationForm = () => {
                                                 )}
                                             </div>
 
+                                            {/* Selected Plan */}
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="label-premium">{t('registration.selectedPlanLabel')}</label>
+                                                    {selectedDetails && !showPlanPicker && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setPickerPlanKey(selectedDetails.planKey);
+                                                                setIsPlanPickerOpen(true);
+                                                            }}
+                                                            className="text-[10px] font-bold uppercase tracking-wider text-brand-red hover:underline cursor-pointer"
+                                                        >
+                                                            {t('registration.changePlan')}
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                {!showPlanPicker && selectedDetails ? (
+                                                    <div className="p-4 rounded-xl bg-brand-red/[0.06] border border-brand-red/30 flex items-center justify-between gap-4">
+                                                        <div className="flex items-center gap-3 min-w-0">
+                                                            <div className="w-9 h-9 rounded-lg bg-brand-red/15 border border-brand-red/25 flex items-center justify-center shrink-0">
+                                                                {selectedDetails.planKey === 'group' ? (
+                                                                    <Users className="w-4 h-4 text-brand-red" />
+                                                                ) : (
+                                                                    <User className="w-4 h-4 text-brand-red" />
+                                                                )}
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className="text-xs font-bold text-white truncate">
+                                                                    {selectedDetails.plan.name} · {selectedDetails.tier.duration}
+                                                                </p>
+                                                                <p className="text-[10px] text-white/45 truncate">
+                                                                    {selectedDetails.tier.daysPerWeek} · {selectedDetails.tier.hoursPerDay}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right shrink-0">
+                                                            <p className="text-sm font-black text-white">
+                                                                {selectedDetails.tier.price} {t('pricing.currency')}
+                                                            </p>
+                                                            <p className="text-[9px] text-white/40">{t('pricing.perMonth')}</p>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className={`p-3.5 rounded-xl bg-white/[0.015] border space-y-3 ${planError ? 'border-red-500/30' : 'border-white/10'}`}>
+                                                        <p className="text-[10px] text-white/40 font-medium">
+                                                            {t('registration.choosePlanPrompt')}
+                                                        </p>
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            {['group', 'individual'].map((key) => {
+                                                                const planInfo = pricingPlans?.[key];
+                                                                const isTabActive = pickerPlanKey === key;
+                                                                return (
+                                                                    <button
+                                                                        key={key}
+                                                                        type="button"
+                                                                        onClick={() => setPickerPlanKey(key)}
+                                                                        className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                                                                            isTabActive
+                                                                                ? 'bg-brand-red/15 border-brand-red text-white'
+                                                                                : 'bg-white/[0.02] border-white/10 text-white/50 hover:text-white'
+                                                                        }`}
+                                                                    >
+                                                                        {key === 'group' ? <Users className="w-3.5 h-3.5 text-brand-red" /> : <User className="w-3.5 h-3.5 text-brand-red" />}
+                                                                        <span>{planInfo?.name}</span>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        <div className="grid grid-cols-3 gap-2">
+                                                            {pickerTiers.map((tier) => {
+                                                                const isSelected = selectedTierId === tier.id;
+                                                                return (
+                                                                    <button
+                                                                        key={tier.id}
+                                                                        type="button"
+                                                                        onClick={() => handleTierSelect(tier.id)}
+                                                                        className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+                                                                            isSelected
+                                                                                ? 'bg-brand-red border-brand-red text-white'
+                                                                                : 'bg-white/[0.02] border-white/10 hover:border-brand-red/40 text-white/80'
+                                                                        }`}
+                                                                    >
+                                                                        <span className="text-[10px] font-bold block">{tier.duration}</span>
+                                                                        <span className={`text-xs font-black block mt-0.5 ${isSelected ? 'text-white' : 'text-brand-red'}`}>
+                                                                            {tier.price} {t('pricing.currency')}
+                                                                        </span>
+                                                                        <span className={`text-[9px] block mt-0.5 ${isSelected ? 'text-white/80' : 'text-white/40'}`}>
+                                                                            {tier.daysPerWeek}
+                                                                        </span>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {planError && (
+                                                    <span className="text-[10px] text-red-500 font-semibold mt-1 ml-1 block">{planError}</span>
+                                                )}
+                                            </div>
+
                                             {/* Proceed to Payment Button */}
                                             <div className="pt-2">
                                                 <button
@@ -740,32 +869,47 @@ const RegistrationForm = () => {
                                             transition={{ duration: 0.25 }}
                                             className="space-y-5"
                                         >
-                                            {/* Premium Location-Based Price Badge */}
-                                            <div className="price-card-premium">
-                                                <span className="text-[9px] uppercase tracking-[0.2em] text-white/40 font-bold block">{t('registration.amountToPay')}</span>
-                                                <div className="flex items-baseline gap-1.5 mt-2">
-                                                    {loadingLocation ? (
-                                                        <div className="flex items-center gap-2 text-white/40 text-xs py-1">
-                                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-red" />
-                                                            <span>{t('registration.detectingLocation')}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <>
-                                                            <span className="text-3xl font-black text-white tracking-tight">
-                                                                {isEthiopia ? "2,500" : "50"}
-                                                            </span>
-                                                            <span className="text-sm font-bold text-white/60">
-                                                                {isEthiopia ? "Birr" : "USD"}
-                                                            </span>
-                                                        </>
-                                                    )}
+                                            {/* Selected Plan Payment Summary */}
+                                            {selectedDetails && (
+                                                <div className="price-card-premium">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <span className="text-[9px] uppercase tracking-[0.2em] text-white/40 font-bold">
+                                                            {t('registration.amountToPay')}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setPickerPlanKey(selectedDetails.planKey);
+                                                                setIsPlanPickerOpen(true);
+                                                                setStep(1);
+                                                            }}
+                                                            className="text-[10px] font-bold uppercase tracking-wider text-brand-red hover:underline cursor-pointer"
+                                                        >
+                                                            {t('registration.changePlan')}
+                                                        </button>
+                                                    </div>
+                                                    <div className="flex items-baseline gap-1.5 mt-2">
+                                                        <span className="text-3xl font-black text-white tracking-tight">
+                                                            {selectedDetails.tier.price}
+                                                        </span>
+                                                        <span className="text-sm font-bold text-white/70">
+                                                            {t('pricing.currency')}
+                                                        </span>
+                                                        <span className="text-xs text-white/40">
+                                                            {t('pricing.perMonth')}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 mt-2 text-[11px] font-semibold text-white/75">
+                                                        <Calendar className="w-3.5 h-3.5 text-brand-red shrink-0" />
+                                                        <span>
+                                                            {selectedDetails.plan.name} · {selectedDetails.tier.duration} · {selectedDetails.tier.daysPerWeek} · {selectedDetails.tier.hoursPerDay}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-white/35 text-[10px] mt-1.5 leading-relaxed">
+                                                        {t('registration.planPaymentNote')}
+                                                    </p>
                                                 </div>
-                                                <p className="text-white/30 text-[10px] mt-1.5 leading-relaxed">
-                                                    {isEthiopia 
-                                                        ? "Special pricing applied for participants within Ethiopia." 
-                                                        : "Standard pricing applied for international participants."}
-                                                </p>
-                                            </div>
+                                            )}
 
                                             {/* Photo Upload */}
                                             <div className="flex flex-col gap-2">
@@ -863,7 +1007,7 @@ const RegistrationForm = () => {
             <SuccessModal
                 isOpen={status === 'success'}
                 onClose={() => setStatus('idle')}
-                userData={formData}
+                userData={{ ...formData, selectedPlan: selectedPlanSummary }}
             />
         </section>
     );

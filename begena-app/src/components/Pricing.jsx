@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, User, Calendar, Clock, Globe, ArrowRight, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
 
-const Pricing = () => {
+const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
     const { t, language } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState('group');
 
@@ -24,8 +24,9 @@ const Pricing = () => {
     const tiers = Array.isArray(activePlan?.tiers) ? activePlan.tiers : [];
     const FormatIcon = selectedPlan === 'group' ? Users : User;
 
-    const handleEnrollClick = (e) => {
+    const handleEnrollClick = (e, tierId) => {
         e.preventDefault();
+        onSelectPlanTier?.(tierId);
         document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' });
     };
 
@@ -145,11 +146,16 @@ const Pricing = () => {
                         >
                             {tiers.map((tier, index) => {
                                 const isHighlighted = index === 1;
+                                const isTierSelected = selectedTierId === tier.id;
                                 return (
                                     <div
                                         key={tier.id}
                                         className={`glass-card p-8 flex flex-col justify-between relative overflow-hidden group ${
-                                            isHighlighted ? 'border-brand-red/35!' : ''
+                                            isTierSelected
+                                                ? 'border-brand-red! shadow-[0_0_35px_rgba(152,28,0,0.25)]'
+                                                : isHighlighted
+                                                    ? 'border-brand-red/35!'
+                                                    : ''
                                         }`}
                                     >
                                         <div className="absolute -top-12 -right-12 w-32 h-32 bg-brand-red/0 group-hover:bg-brand-red/12 rounded-full blur-2xl transition-all duration-700 pointer-events-none" />
@@ -217,14 +223,15 @@ const Pricing = () => {
 
                                         <a
                                             href="#register"
-                                            onClick={handleEnrollClick}
+                                            onClick={(e) => handleEnrollClick(e, tier.id)}
                                             className={`relative z-10 w-full py-3.5 px-6 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 ${
-                                                isHighlighted
+                                                isTierSelected || isHighlighted
                                                     ? 'bg-brand-red hover:bg-brand-red-light text-white shadow-lg shadow-brand-red/25'
                                                     : 'bg-white/5 hover:bg-brand-red text-white border border-white/10 hover:border-brand-red'
                                             }`}
                                         >
-                                            <span>{t('pricing.enrollAction')}</span>
+                                            {isTierSelected && <CheckCircle className="w-4 h-4" />}
+                                            <span>{isTierSelected ? t('pricing.selectedBadge') : t('pricing.enrollAction')}</span>
                                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                         </a>
 

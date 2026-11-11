@@ -23,15 +23,18 @@ const SuccessModal = ({ isOpen, onClose, userData }) => {
         doc.setFont('helvetica', 'normal');
         doc.text('Official Registration Receipt', 105, 30, { align: 'center' });
 
+        const rows = [
+            ['Full Name', userData.fullName],
+            ['Phone Number', `${userData.countryCode} ${userData.phoneNumber}`],
+            ['Telegram Username', userData.telegram],
+            ...(userData.selectedPlan ? [['Training Plan', userData.selectedPlan]] : []),
+            ['Date', new Date().toLocaleDateString()],
+        ];
+
         autoTable(doc, {
             startY: 50,
             head: [['Field', 'Details']],
-            body: [
-                ['Full Name', userData.fullName],
-                ['Phone Number', `${userData.countryCode} ${userData.phoneNumber}`],
-                ['Telegram Username', userData.telegram],
-                ['Date', new Date().toLocaleDateString()],
-            ],
+            body: rows,
             theme: 'grid',
             headStyles: { fillColor: [152, 28, 0], textColor: [255, 255, 255] },
             styles: { fontSize: 11, cellPadding: 5 },

@@ -137,13 +137,16 @@ export const translations = {
             sectionDesc: 'Please choose your preferred method to complete your payment, and upload the receipt screenshot.',
             pathTitle1: 'Payment',
             pathTitle2: 'Details & Options',
-            pathDesc: 'Please transfer the registration fee to one of the official accounts below. Make sure to capture a screenshot/receipt of the transaction to upload with your registration form.',
+            pathDesc: 'Please transfer the fee for your selected plan to one of the official accounts below. Make sure to capture a screenshot/receipt of the transaction to upload with your registration form.',
             step1: 'Personal Details',
             step2: 'Payment & Receipt',
             proceedToPayment: 'Proceed to Payment',
             backToDetails: 'Back to Details',
-            amountToPay: 'Registration Fee',
-            detectingLocation: 'Detecting location...',
+            amountToPay: 'Selected Plan Fee',
+            selectedPlanLabel: 'Training Plan',
+            choosePlanPrompt: 'Select your plan type & duration:',
+            changePlan: 'Change',
+            planPaymentNote: 'Transfer this monthly fee to one of the official accounts and upload your receipt screenshot.',
             formTitle: 'Registration Form',
             formDesc: 'Please fill in your details accurately.',
             fullName: 'Full Name',
@@ -162,6 +165,7 @@ export const translations = {
                 phoneNumber: 'Phone number is required',
                 validPhone: 'Enter a valid phone number',
                 telegram: 'Telegram username is required',
+                plan: 'Please select a training plan',
                 photo: 'Please upload your photo',
                 fileSize: 'File size must be less than 5MB',
             },
@@ -346,13 +350,16 @@ export const translations = {
             sectionDesc: 'እባክዎ ተመራጭ የክፍያ መንገድ በመምረጥ ክፍያዎን ይፈጽሙና ደረሰኙን ይስቀሉ።',
             pathTitle1: 'የክፍያ',
             pathTitle2: 'አማራጮችና ዝርዝሮች',
-            pathDesc: 'እባክዎ የመመዝገቢያ ክፍያውን ከታች ባሉት ይፋዊ ሂሳቦች በአንዱ ይክፈሉ። ክፍያውን ከፈጸሙ በኋላ የክፍያውን ማረጋገጫ (ስክሪንሾት) በመያዝ በቀኝ በኩል ባለው የምዝገባ ፎርም ላይ ያያይዙ።',
+            pathDesc: 'እባክዎ ለመረጡት እቅድ ክፍያውን ከታች ባሉት ይፋዊ ሂሳቦች በአንዱ ይክፈሉ። ክፍያውን ከፈጸሙ በኋላ የክፍያውን ማረጋገጫ (ስክሪንሾት) በመያዝ በቀኝ በኩል ባለው የምዝገባ ፎርም ላይ ያያይዙ።',
             step1: 'የግል መረጃ',
             step2: 'ክፍያ እና ደረሰኝ',
             proceedToPayment: 'ወደ ክፍያ ይቀጥሉ',
             backToDetails: 'ወደ ኋላ ተመለስ',
-            amountToPay: 'የመመዝገቢያ ክፍያ',
-            detectingLocation: 'አድራሻን በመፈተሽ ላይ...',
+            amountToPay: 'የተመረጠው እቅድ ክፍያ',
+            selectedPlanLabel: 'የስልጠና እቅድ',
+            choosePlanPrompt: 'የስልጠና ዓይነትና ጊዜ ይምረጡ፦',
+            changePlan: 'ቀይር',
+            planPaymentNote: 'ይህንን ወርሃዊ ክፍያ በግራ በኩል ባሉት ይፋዊ ሂሳቦች ከፍለው የክፍያውን ስክሪንሾት ይስቀሉ።',
             formTitle: 'የምዝገባ ቅጽ',
             formDesc: 'መረጃዎን በትክክል ይሙሉ።',
             fullName: 'ሙሉ ስም',
@@ -371,6 +378,7 @@ export const translations = {
                 phoneNumber: 'ስልክ ቁጥር ያስፈልጋል',
                 validPhone: 'ትክክለኛ ስልክ ቁጥር ያስገቡ',
                 telegram: 'የቴሌግራም መለያ ያስፈልጋል',
+                plan: 'እባክዎ የስልጠና እቅድ ይምረጡ',
                 photo: 'እባክዎ ፎቶዎን ያስገቡ',
                 fileSize: 'የፋይሉ መጠን ከ 5MB በታች መሆን አለበት',
             },
@@ -418,4 +426,17 @@ export const translations = {
             handcraftedBy: 'የተሰራው በ',
         },
     },
+};
+
+export const findPricingTier = (lang, tierId) => {
+    const pricingPlans = translations[lang]?.pricing?.plans || translations.en.pricing.plans;
+    if (!pricingPlans || !tierId) return null;
+    for (const planKey of ['group', 'individual']) {
+        const plan = pricingPlans[planKey];
+        const tier = plan?.tiers?.find((item) => item.id === tierId);
+        if (tier) {
+            return { planKey, plan, tier };
+        }
+    }
+    return null;
 };
