@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
 import {
-    Music, Send, Youtube, Instagram,
-    Mail, Phone, ArrowUpRight, Heart, Sparkles
+    Send, Youtube, Instagram,
+    Mail, Phone
 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import logoImg from '../assets/enzira-logo.png';
 import { useLanguage } from '../lib/LanguageContext';
 
 const Footer = () => {
     const { t } = useLanguage();
+    const location = useLocation();
     const currentYear = new Date().getFullYear();
 
     const socialLinks = [
@@ -17,11 +19,18 @@ const Footer = () => {
     ];
 
     const quickLinks = [
-        { name: t('footer.aboutArt'), href: '#about' },
-        { name: t('footer.trainingModules'), href: '#training' },
-        { name: t('footer.globalAdmissions'), href: '#register' },
-        { name: t('footer.sacredHistory'), href: '#' }
+        { name: t('footer.aboutArt'), to: '/#about', hash: 'about' },
+        { name: t('footer.pricing'), to: '/pricing' },
+        { name: t('footer.trainingModules'), to: '/#about', hash: 'about' },
+        { name: t('footer.globalAdmissions'), to: '/#register', hash: 'register' },
     ];
+
+    const handleQuickLinkClick = (e, hash) => {
+        if (hash && location.pathname === '/') {
+            e.preventDefault();
+            document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     return (
         <footer id="footer" className="bg-dark-950 pt-24 pb-12 relative overflow-hidden border-t border-white/5">
@@ -64,10 +73,14 @@ const Footer = () => {
                         <ul className="space-y-4">
                             {quickLinks.map((link, i) => (
                                 <li key={i}>
-                                    <a href={link.href} className="text-sm text-white/30 hover:text-brand-red transition-all flex items-center gap-2 group">
+                                    <Link
+                                        to={link.to}
+                                        onClick={(e) => handleQuickLinkClick(e, link.hash)}
+                                        className="text-sm text-white/30 hover:text-brand-red transition-all flex items-center gap-2 group"
+                                    >
                                         <div className="w-1 h-1 rounded-full bg-brand-red scale-0 group-hover:scale-100 transition-transform" />
                                         {link.name}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

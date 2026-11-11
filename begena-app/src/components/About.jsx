@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { History, GraduationCap, Music, PlayCircle, Calendar, Globe, Clock, User } from 'lucide-react';
+import { History, GraduationCap, Music, PlayCircle } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
 
 const About = () => {
@@ -29,24 +29,6 @@ const About = () => {
             description: t('about.feature4Desc'),
             color: "brand-red"
         }
-    ];
-
-    const scheduleHighlights = [
-        {
-            icon: Calendar,
-            title: t('about.scheduleItem1Title'),
-            description: t('about.scheduleItem1Desc'),
-        },
-        {
-            icon: Globe,
-            title: t('about.scheduleItem2Title'),
-            description: t('about.scheduleItem2Desc'),
-        },
-        {
-            icon: Clock,
-            title: t('about.scheduleItem3Title'),
-            description: t('about.scheduleItem3Desc'),
-        },
     ];
 
     const containerVariants = {
@@ -125,55 +107,6 @@ const About = () => {
                             <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-linear-to-r from-brand-red to-transparent group-hover:w-full transition-all duration-700" />
                         </motion.div>
                     ))}
-                </motion.div>
-
-                {/* Individual Plan & Schedule Highlight */}
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
-                    className="mt-8 rounded-xl bg-linear-to-br from-[#140502]/60 to-[#0a0201]/80 backdrop-blur-xl border border-brand-red/20 p-6 md:p-8 relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
-                >
-                    <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
-
-                    <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                        <div className="lg:max-w-xs">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brand-red/10 border border-brand-red/20 mb-3">
-                                <User className="w-3.5 h-3.5 text-brand-red" />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-red">
-                                    {t('about.scheduleBadge')}
-                                </span>
-                            </div>
-                            <h3 className="font-heading text-xl font-bold text-white mb-1.5">
-                                {t('about.scheduleTitle')}
-                            </h3>
-                            <p className="text-white/40 text-xs leading-relaxed font-light">
-                                {t('about.scheduleSubtitle')}
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:flex-1 lg:pl-8 lg:border-l lg:border-white/10">
-                            {scheduleHighlights.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-start gap-3.5 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-brand-red/30 hover:bg-white/[0.04] transition-all duration-300 group"
-                                >
-                                    <div className="w-10 h-10 shrink-0 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red transition-all duration-300">
-                                        <item.icon className="w-4.5 h-4.5 text-brand-red group-hover:text-white transition-colors duration-300" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-heading text-sm font-bold text-white mb-0.5">
-                                            {item.title}
-                                        </h4>
-                                        <p className="text-white/40 text-xs leading-relaxed font-light group-hover:text-white/60 transition-colors">
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </motion.div>
             </div>
         </section>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronRight, Shield, ClipboardCheck, Settings, Globe } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Menu, X, ChevronRight, Shield, ClipboardCheck, Settings } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import logoImg from '../assets/enzira-logo.png';
 import { useLanguage } from '../lib/LanguageContext';
 
@@ -10,6 +10,7 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const { toggleLanguage, t } = useLanguage();
+    const location = useLocation();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -19,11 +20,20 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const handleSectionClick = (e, hash) => {
+        setIsMobileMenuOpen(false);
+        if (hash && location.pathname === '/') {
+            e.preventDefault();
+            document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     const navLinks = [
-        { name: t('nav.home'), href: '#home' },
-        { name: t('nav.about'), href: '#about' },
-        { name: t('nav.training'), href: '#register' },
-        { name: t('nav.contact'), href: '#footer' },
+        { name: t('nav.home'), to: '/#home', hash: 'home' },
+        { name: t('nav.about'), to: '/#about', hash: 'about' },
+        { name: t('nav.pricing'), to: '/pricing' },
+        { name: t('nav.training'), to: '/#register', hash: 'register' },
+        { name: t('nav.contact'), to: '/#footer', hash: 'footer' },
     ];
 
     return (
@@ -42,24 +52,33 @@ const Navbar = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="flex items-center gap-3 group cursor-pointer"
                     >
-                        <img src={logoImg} alt="Enzira Logo" className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" />
+                        <Link to="/#home" onClick={(e) => handleSectionClick(e, 'home')}>
+                            <img src={logoImg} alt="Enzira Logo" className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" />
+                        </Link>
                     </motion.div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-10">
-                        {navLinks.map((link, i) => (
-                            <motion.a
-                                key={link.name}
-                                href={link.href}
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                className="text-sm font-medium text-white/60 hover:text-white transition-colors relative group"
-                            >
-                                {link.name}
-                                <span className="absolute -bottom-1 left-0 w-0 h-px bg-brand-red transition-all duration-300 group-hover:w-full" />
-                            </motion.a>
-                        ))}
+                    <div className="hidden md:flex items-center gap-8 lg:gap-10">
+                        {navLinks.map((link, i) => {
+                            const isActive = !link.hash && location.pathname === link.to;
+                            return (
+                                <motion.div
+                                    key={link.to}
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                >
+                                    <Link
+                                        to={link.to}
+                                        onClick={(e) => handleSectionClick(e, link.hash)}
+                                        className={`text-sm font-medium transition-colors relative group ${isActive ? 'text-white' : 'text-white/60 hover:text-white'}`}
+                                    >
+                                        {link.name}
+                                        <span className={`absolute -bottom-1 left-0 h-px bg-brand-red transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
 
                     </div>
 
@@ -121,13 +140,14 @@ const Navbar = () => {
                             </AnimatePresence>
                         </div>
 
-                        <a
-                            href="#register"
+                        <Link
+                            to="/#register"
+                            onClick={(e) => handleSectionClick(e, 'register')}
                             className="btn-primary py-2.5! px-7! text-sm group"
                         >
                             <span>{t('nav.enrollNow')}</span>
                             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </a>
+                        </Link>
                     </motion.div>
 
                     {/* Mobile Menu Toggle */}
@@ -154,15 +174,15 @@ const Navbar = () => {
                         <div className="glass rounded-xl p-8 shadow-2xl">
                             <div className="flex flex-col gap-6">
                                 {navLinks.map((link) => (
-                                    <a
-                                        key={link.name}
-                                        href={link.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    <Link
+                                        key={link.to}
+                                        to={link.to}
+                                        onClick={(e) => handleSectionClick(e, link.hash)}
                                         className="text-lg font-medium text-white/70 hover:text-brand-red transition-colors flex items-center justify-between group"
                                     >
                                         {link.name}
                                         <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-                                    </a>
+                                    </Link>
                                 ))}
 
                                 {/* Mobile Language Switcher */}
@@ -194,13 +214,13 @@ const Navbar = () => {
                                     <span className="flex items-center gap-2"><Shield className="w-5 h-5" /> {t('nav.adminLogin')}</span>
                                     <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                                 </Link>
-                                <a
-                                    href="#register"
-                                    onClick={() => setIsMobileMenuOpen(false)}
+                                <Link
+                                    to="/#register"
+                                    onClick={(e) => handleSectionClick(e, 'register')}
                                     className="btn-primary w-full py-4 text-lg font-bold"
                                 >
                                     {t('nav.enrollNow')}
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </motion.div>
