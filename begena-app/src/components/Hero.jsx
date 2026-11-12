@@ -139,15 +139,20 @@ const Hero = () => {
                         <ArrowRight className="w-5 h-5" />
                     </motion.a>
 
-                    <motion.button
+                    <motion.a
+                        href="#about"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="btn-secondary px-10 py-5 group overflow-hidden relative"
+                        className="btn-secondary px-10 py-5 group overflow-hidden relative inline-flex items-center gap-2 cursor-pointer"
                     >
                         <div className="absolute inset-0 bg-brand-red/0 group-hover:bg-brand-red/5 transition-colors" />
                         <Play className="w-5 h-5 text-brand-red group-hover:text-white transition-colors relative z-10" />
-                        <span className="relative z-10">{t('hero.watchJourney')}</span>
-                    </motion.button>
+                        <span className="relative z-10">{t('hero.ourService')}</span>
+                    </motion.a>
                 </motion.div>
 
                 {/* Stats */}

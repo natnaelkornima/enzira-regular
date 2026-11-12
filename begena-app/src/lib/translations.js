@@ -3,7 +3,7 @@ export const translations = {
         // Navbar
         nav: {
             home: 'Home',
-            about: 'About',
+            about: 'Our Service',
             pricing: 'Pricing',
             training: 'Training',
             contact: 'Contact',
@@ -21,7 +21,8 @@ export const translations = {
             description:
                 'Have you ever wondered when you will finally be able to play the Begena fluently? In this regular Enzira training, we are designed to help you play the Begena with complete dexterity and ease.',
             startLearning: 'Start Learning',
-            watchJourney: 'Watch Journey',
+            ourService: 'Our Service',
+            watchJourney: 'Our Service',
             stat1Value: '85%',
             stat1Label: 'Teaching Success',
             stat2Value: '12+',
@@ -29,9 +30,9 @@ export const translations = {
             stat3Value: '50+',
             stat3Label: 'Training Hours',
         },
-        // About
+        // About / Our Service
         about: {
-            subtitle: 'Enzira',
+            subtitle: 'Our Services',
             titleLine1: 'Begena',
             titleLine2: 'I too shall praise like David!',
             description:
@@ -55,7 +56,7 @@ export const translations = {
             titleLine1: 'Choose Your',
             titleLine2: 'Begena Plan',
             description:
-                'First select between our Group Plan (5 people) or 1-on-1 Individual Plan, then choose the duration and schedule that fits you best.',
+                'First select between our 1-on-1 Individual Plan or Group Plan (5 people), then choose the duration and schedule that fits you best.',
             step1Label: 'Step 1 · Select Plan Type',
             step2Label: 'Step 2 · Available Packages',
             perMonth: '/ month',
@@ -64,38 +65,6 @@ export const translations = {
             enrollAction: 'Enroll with This Plan',
             selectedBadge: 'Selected',
             plans: {
-                group: {
-                    name: 'Group Plan',
-                    badge: '5 People',
-                    description: 'Learn online in an interactive small group of 5 students.',
-                    formatLabel: 'Group of 5 Students',
-                    tiers: [
-                        {
-                            id: 'group-3m',
-                            duration: '3 Months',
-                            tag: 'Intensive',
-                            daysPerWeek: '5 Days / Week',
-                            hoursPerDay: '1 hr 30 min / Day',
-                            price: '2,800',
-                        },
-                        {
-                            id: 'group-6m',
-                            duration: '6 Months',
-                            tag: 'Balanced',
-                            daysPerWeek: '3 Days / Week',
-                            hoursPerDay: '1 hr 30 min / Day',
-                            price: '1,500',
-                        },
-                        {
-                            id: 'group-9m',
-                            duration: '9 Months',
-                            tag: 'Steady Pace',
-                            daysPerWeek: '2 Days / Week',
-                            hoursPerDay: '1 hr 30 min / Day',
-                            price: '1,200',
-                        },
-                    ],
-                },
                 individual: {
                     name: 'Individual Plan',
                     badge: '1-on-1',
@@ -125,6 +94,22 @@ export const translations = {
                             daysPerWeek: '2 Days / Week',
                             hoursPerDay: '1 hr 30 min / Day',
                             price: '5,000',
+                        },
+                    ],
+                },
+                group: {
+                    name: 'Group Plan',
+                    badge: '5 People',
+                    description: 'Learn online in an interactive small group of 5 students.',
+                    formatLabel: 'Group of 5 Students',
+                    tiers: [
+                        {
+                            id: 'group-unified',
+                            duration: '6 Months',
+                            tag: 'Unified Program',
+                            daysPerWeek: '3 Days / Week',
+                            hoursPerDay: '1 hr 30 min / Day',
+                            price: '1,833',
                         },
                     ],
                 },
@@ -217,7 +202,7 @@ export const translations = {
         // Navbar
         nav: {
             home: 'ዋና',
-            about: 'ስለ እኛ',
+            about: 'አገልግሎታችን',
             pricing: 'ክፍያ',
             training: 'ስልጠና',
             contact: 'ያግኙን',
@@ -235,7 +220,8 @@ export const translations = {
             description:
                 'በመጨረሻ በገናን በቅልጥፍና መቼ መጫወት እንደምትችል አስበህ ታውቃለህ? በዚህ መደበኛ የእንዚራ ስልጠና፣ በገናን በተሟላ ክህሎት እና በከፍተኛ ቅለት እንድትጫወት ለመርዳት ተዘጋጅተናል።',
             startLearning: 'ይጀምሩ',
-            watchJourney: 'ጉዞውን ይመልከቱ',
+            ourService: 'አገልግሎታችን',
+            watchJourney: 'አገልግሎታችን',
             stat1Value: '85%',
             stat1Label: 'የማስተማር ስኬት ',
             stat2Value: '12+',
@@ -243,22 +229,22 @@ export const translations = {
             stat3Value: '50+',
             stat3Label: 'የስልጠና ሰዓታት',
         },
-        // About
+        // About / Our Service
         about: {
-            subtitle: 'እንዚራ',
+            subtitle: 'የምንሰጣቸው አገልግሎቶች',
             titleLine1: 'በገና',
             titleLine2: 'እኔም እንደ ዳዊት እደረድራለሁ!',
             description: 'የእንዚራ ኦንላይን የበገና ትምህርት ቤት ዋና ዓላማ ምዕመናን በሀገር ውስጥና በውጭ ሆነው ጥንታዊውን የበገና መሣሪያ እንዲማሩና ለትውልድ እንዲያስተላልፉ ማስቻል ሲሆን፣ ብቁ ተተኪ መምህራንን በማፍራትም የአገልግሎቱን ተደራሽነት ማስፋፋት ነው።',
-            feature1Title: 'ሶስቱን ቅኝቶች በሚገባ ያውቃሉ።',
+            feature1Title: 'ሶስቱን ቅኝቶች ማስተማር',
             feature1Desc:
-                'ማለትም ሰላምታ ፣ ዋንየን እና ስለቸርነትህ በሚገባ አውቀው በገና መድርድር ይችላሉ።',
-            feature2Title: 'ድርብ ድርደራ ይችላሉ።',
+                'ማለትም ሰላምታ ፣ ዋንየን እና ስለቸርነትህ በሚገባ አውቀው በገና መድርደር ይችላሉ።',
+            feature2Title: 'የድርብ ድርደራ ስልጠና',
             feature2Desc:
-                "ጣቶት ድርብ ድርደራ ከመዝሙራት ጋር እንዲችል አናደርጋለን።",
-            feature3Title: 'ነዑስ ቅኝቶችን መለየት ይችላሉ።',
+                "ጣቶት ድርብ ድርደራ ከመዝሙራት ጋር እንዲችል እናደርጋለን።",
+            feature3Title: 'ነዑስ ቅኝቶችን ማስተማር',
             feature3Desc:
                 'ከዋና ቅኝቶች ባሻገር ነዑስ ቅኝቶችን መለየት ይችላሉ።',
-            feature4Title: 'በቂ የመዝሙራት ልምምድ።',
+            feature4Title: 'በቂ የመዝሙራት ልምምድ',
             feature4Desc:
                 'በቂ የመዝሙራት ልምምድ ይኖረናል፤ ይህም በገናን በተሟላ ክህሎት ለደርደር የሚያስችላችሁ ትምህርት አዘጋጅተናል።',
         },
@@ -268,7 +254,7 @@ export const translations = {
             titleLine1: 'የስልጠና',
             titleLine2: 'እቅድዎን ይምረጡ',
             description:
-                'በመጀመሪያ የቡድን (5 ሰው) ወይም የግል (1 ለ 1) ስልጠና ይምረጡ፤ በመቀጠል ከፕሮግራምዎ ጋር የሚስማማውን የጊዜና የክፍያ አማራጭ ይመልከቱ።',
+                'በመጀመሪያ የግል (1 ለ 1) ወይም የቡድን (5 ሰው) ስልጠና ይምረጡ፤ በመቀጠል ከፕሮግራምዎ ጋር የሚስማማውን የጊዜና የክፍያ አማራጭ ይመልከቱ።',
             step1Label: 'ደረጃ 1 · የስልጠና ዓይነት ይምረጡ',
             step2Label: 'ደረጃ 2 · የጊዜና የክፍያ አማራጮች',
             perMonth: '/ በወር',
@@ -277,38 +263,6 @@ export const translations = {
             enrollAction: 'በዚህ እቅድ ይመዝገቡ',
             selectedBadge: 'የተመረጠ',
             plans: {
-                group: {
-                    name: 'የቡድን እቅድ',
-                    badge: '5 ሰው',
-                    description: '5 ተማሪዎችን በሚይዝ አነስተኛ ቡድን ውስጥ በኦንላይን በጋራ ይማሩ።',
-                    formatLabel: 'የ5 ሰው ቡድን ስልጠና',
-                    tiers: [
-                        {
-                            id: 'group-3m',
-                            duration: 'የ3 ወር',
-                            tag: 'ፈጣን',
-                            daysPerWeek: 'በሳምንት 5 ቀን',
-                            hoursPerDay: 'በቀን 1:30',
-                            price: '2,800',
-                        },
-                        {
-                            id: 'group-6m',
-                            duration: 'የ6 ወር',
-                            tag: 'መካከለኛ',
-                            daysPerWeek: 'በሳምንት 3 ቀን',
-                            hoursPerDay: 'በቀን 1:30',
-                            price: '1,500',
-                        },
-                        {
-                            id: 'group-9m',
-                            duration: 'የ9 ወር',
-                            tag: 'ረጋ ያለ',
-                            daysPerWeek: 'በሳምንት 2 ቀን',
-                            hoursPerDay: 'በቀን 1:30',
-                            price: '1,200',
-                        },
-                    ],
-                },
                 individual: {
                     name: 'የግል እቅድ',
                     badge: '1 ለ 1',
@@ -338,6 +292,22 @@ export const translations = {
                             daysPerWeek: 'በሳምንት 2 ቀን',
                             hoursPerDay: 'በቀን 1:30',
                             price: '5,000',
+                        },
+                    ],
+                },
+                group: {
+                    name: 'የቡድን እቅድ',
+                    badge: '5 ሰው',
+                    description: '5 ተማሪዎችን በሚይዝ አነስተኛ ቡድን ውስጥ በኦንላይን በጋራ ይማሩ።',
+                    formatLabel: 'የ5 ሰው ቡድን ስልጠና',
+                    tiers: [
+                        {
+                            id: 'group-unified',
+                            duration: 'የ6 ወር',
+                            tag: 'የተጠቃለለ',
+                            daysPerWeek: 'በሳምንት 3 ቀን',
+                            hoursPerDay: 'በቀን 1:30',
+                            price: '1,833',
                         },
                     ],
                 },
@@ -431,11 +401,19 @@ export const translations = {
 export const findPricingTier = (lang, tierId) => {
     const pricingPlans = translations[lang]?.pricing?.plans || translations.en.pricing.plans;
     if (!pricingPlans || !tierId) return null;
-    for (const planKey of ['group', 'individual']) {
+    for (const planKey of ['individual', 'group']) {
         const plan = pricingPlans[planKey];
         const tier = plan?.tiers?.find((item) => item.id === tierId);
         if (tier) {
             return { planKey, plan, tier };
+        }
+    }
+    // Fallback for legacy group tier IDs
+    if (typeof tierId === 'string' && tierId.startsWith('group-')) {
+        const groupPlan = pricingPlans.group;
+        const fallbackTier = groupPlan?.tiers?.[0];
+        if (fallbackTier) {
+            return { planKey: 'group', plan: groupPlan, tier: fallbackTier };
         }
     }
     return null;

@@ -50,6 +50,7 @@ const About = () => {
 
     return (
         <section id="about" className="section-container relative overflow-hidden bg-dark-950">
+            <div id="services" className="absolute -top-24 pointer-events-none" />
             {/* Background Accent */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-brand-red/5 rounded-full blur-[120px] -z-10" />
 

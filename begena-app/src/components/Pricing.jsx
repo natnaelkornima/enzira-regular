@@ -5,24 +5,24 @@ import { useLanguage } from '../lib/LanguageContext';
 
 const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
     const { t, language } = useLanguage();
-    const [selectedPlan, setSelectedPlan] = useState('group');
+    const [selectedPlan, setSelectedPlan] = useState('individual');
 
     const planOptions = [
-        {
-            key: 'group',
-            icon: Users,
-            data: t('pricing.plans.group'),
-        },
         {
             key: 'individual',
             icon: User,
             data: t('pricing.plans.individual'),
         },
+        {
+            key: 'group',
+            icon: Users,
+            data: t('pricing.plans.group'),
+        },
     ];
 
     const activePlan = t(`pricing.plans.${selectedPlan}`);
     const tiers = Array.isArray(activePlan?.tiers) ? activePlan.tiers : [];
-    const FormatIcon = selectedPlan === 'group' ? Users : User;
+    const FormatIcon = selectedPlan === 'individual' ? User : Users;
 
     const handleEnrollClick = (e, tierId) => {
         e.preventDefault();
@@ -142,10 +142,14 @@ const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -12 }}
                             transition={{ duration: 0.3, ease: 'easeOut' }}
-                            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                            className={
+                                tiers.length === 1
+                                    ? 'max-w-md mx-auto w-full'
+                                    : 'grid grid-cols-1 md:grid-cols-3 gap-6'
+                            }
                         >
                             {tiers.map((tier, index) => {
-                                const isHighlighted = index === 1;
+                                const isHighlighted = tiers.length === 1 || index === 1;
                                 const isTierSelected = selectedTierId === tier.id;
                                 return (
                                     <div

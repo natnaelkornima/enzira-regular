@@ -103,7 +103,7 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [step, setStep] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
-    const [pickerPlanKey, setPickerPlanKey] = useState('group');
+    const [pickerPlanKey, setPickerPlanKey] = useState('individual');
     const [isPlanPickerOpen, setIsPlanPickerOpen] = useState(false);
 
     const selectedDetails = findPricingTier(language, selectedTierId);
@@ -796,7 +796,7 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                             {t('registration.choosePlanPrompt')}
                                                         </p>
                                                         <div className="grid grid-cols-2 gap-2">
-                                                            {['group', 'individual'].map((key) => {
+                                                            {['individual', 'group'].map((key) => {
                                                                 const planInfo = pricingPlans?.[key];
                                                                 const isTabActive = pickerPlanKey === key;
                                                                 return (
@@ -816,7 +816,7 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                                 );
                                                             })}
                                                         </div>
-                                                        <div className="grid grid-cols-3 gap-2">
+                                                        <div className={`grid gap-2 ${pickerTiers.length === 1 ? 'grid-cols-1' : 'grid-cols-3'}`}>
                                                             {pickerTiers.map((tier) => {
                                                                 const isSelected = selectedTierId === tier.id;
                                                                 return (
@@ -828,15 +828,24 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                                             isSelected
                                                                                 ? 'bg-brand-red border-brand-red text-white'
                                                                                 : 'bg-white/[0.02] border-white/10 hover:border-brand-red/40 text-white/80'
-                                                                        }`}
+                                                                        } ${pickerTiers.length === 1 ? 'flex items-center justify-between px-4 py-3' : ''}`}
                                                                     >
-                                                                        <span className="text-[10px] font-bold block">{tier.duration}</span>
-                                                                        <span className={`text-xs font-black block mt-0.5 ${isSelected ? 'text-white' : 'text-brand-red'}`}>
-                                                                            {tier.price} {t('pricing.currency')}
-                                                                        </span>
-                                                                        <span className={`text-[9px] block mt-0.5 ${isSelected ? 'text-white/80' : 'text-white/40'}`}>
-                                                                            {tier.daysPerWeek}
-                                                                        </span>
+                                                                        <div>
+                                                                            <span className="text-[10px] font-bold block">{tier.duration}</span>
+                                                                            <span className={`text-xs font-black block mt-0.5 ${isSelected ? 'text-white' : 'text-brand-red'}`}>
+                                                                                {tier.price} {t('pricing.currency')}
+                                                                            </span>
+                                                                            <span className={`text-[9px] block mt-0.5 ${isSelected ? 'text-white/80' : 'text-white/40'}`}>
+                                                                                {tier.daysPerWeek}
+                                                                            </span>
+                                                                        </div>
+                                                                        {pickerTiers.length === 1 && (
+                                                                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
+                                                                                isSelected ? 'bg-white/20 text-white' : 'text-brand-red bg-brand-red/10'
+                                                                            }`}>
+                                                                                {tier.tag}
+                                                                            </span>
+                                                                        )}
                                                                     </button>
                                                                 );
                                                             })}
