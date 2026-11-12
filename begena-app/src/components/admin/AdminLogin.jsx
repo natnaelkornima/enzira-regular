@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
 const AdminLogin = () => {
-    const configuredAdminEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'enzirabegena19@gmail.com').trim().toLowerCase();
+    const configuredAdminEmail = (import.meta.env.VITE_ADMIN_EMAIL || '').trim().toLowerCase();
     const configuredAdminPassword = (import.meta.env.VITE_ADMIN_PASSWORD || 'enzira2026').trim();
 
     const [password, setPassword] = useState('');
@@ -109,7 +109,7 @@ const AdminLogin = () => {
                                     type="email"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
-                                    placeholder={configuredAdminEmail}
+                                    placeholder={configuredAdminEmail || 'admin@example.com'}
                                     className="w-full pr-6 pl-14 py-4 rounded-xl bg-dark-900 border border-white/5 text-white placeholder-white/20 transition-all duration-300 focus:outline-hidden focus:border-brand-red focus:ring-4 focus:ring-brand-red/10 text-sm"
                                 />
                             </div>

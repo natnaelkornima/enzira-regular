@@ -20,7 +20,7 @@ const AdminDashboard = () => {
     const [selectedStudents, setSelectedStudents] = useState(new Set());
     const [tempSelectedStudents, setTempSelectedStudents] = useState(new Set());
     const [viewingReceipt, setViewingReceipt] = useState(null);
-    const [adminEmail, setAdminEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL || 'enzirabegena19@gmail.com');
+    const [adminEmail, setAdminEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL || 'Admin');
     const navigate = useNavigate();
 
     const filteredRegistrations = registrations.filter(r =>

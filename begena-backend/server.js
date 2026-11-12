@@ -14,14 +14,16 @@ const JWT_SECRET = process.env.JWT_SECRET || 'begena_super_secret_key_2026';
 // Connect to MongoDB
 connectDB().then(async () => {
     // Seed default admin if it doesn't exist
-    const adminExists = await Admin.findOne({ email: 'enzirabegena19@gmail.com' });
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'enzira1621';
+    const adminExists = await Admin.findOne({ email: adminEmail });
     if (!adminExists) {
         const defaultAdmin = new Admin({
-            email: 'enzirabegena19@gmail.com',
-            password: 'enzira1621' // default password, will be hashed
+            email: adminEmail,
+            password: adminPassword
         });
         await defaultAdmin.save();
-        console.log('Default admin seeded: enzirabegena19@gmail.com / enzira1621');
+        console.log('Default admin seeded.');
     }
 });
 
