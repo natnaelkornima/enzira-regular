@@ -10,6 +10,7 @@ create table if not exists public.registrations (
   phone_number text not null,
   username text,
   uploaded_screenshot text,
+  plan text,
   -- Additional fields for international formatting & status tracking
   full_name text,
   country_code text default '+251',
@@ -24,6 +25,7 @@ alter table public.registrations add column if not exists name text;
 alter table public.registrations add column if not exists phone_number text;
 alter table public.registrations add column if not exists username text;
 alter table public.registrations add column if not exists uploaded_screenshot text;
+alter table public.registrations add column if not exists plan text;
 alter table public.registrations add column if not exists full_name text;
 alter table public.registrations add column if not exists country_code text default '+251';
 alter table public.registrations add column if not exists telegram text;
@@ -69,3 +71,14 @@ create policy "Allow public deletes" on public.registrations
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('receipts', 'receipts', true, 10485760)
 on conflict (id) do update set public = true;
+
+-- 7. Allow public uploads and reads for receipts storage
+drop policy if exists "Allow public uploads to receipts" on storage.objects;
+create policy "Allow public uploads to receipts" on storage.objects
+  for insert to public
+  with check (bucket_id = 'receipts');
+
+drop policy if exists "Allow public reads of receipts" on storage.objects;
+create policy "Allow public reads of receipts" on storage.objects
+  for select to public
+  using (bucket_id = 'receipts');

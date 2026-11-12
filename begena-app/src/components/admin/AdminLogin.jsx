@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Loader2, AlertCircle, KeyRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
 const AdminLogin = () => {
-    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const configuredAdminEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'enzirabegena19@gmail.com').trim().toLowerCase();
+    const configuredAdminPassword = (import.meta.env.VITE_ADMIN_PASSWORD || 'enzira2026').trim();
+
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [showEmailInput, setShowEmailInput] = useState(false);
     const [status, setStatus] = useState('idle');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -15,23 +20,26 @@ const AdminLogin = () => {
         setStatus('loading');
         setError('');
 
-        const configuredAdminEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'enzirabegena19@gmail.com').trim().toLowerCase();
-        const configuredAdminPassword = (import.meta.env.VITE_ADMIN_PASSWORD || '').trim();
+        const inputEmail = (email.trim() || configuredAdminEmail).toLowerCase();
+        const inputPassword = password.trim();
 
-        const inputEmail = credentials.email.trim().toLowerCase();
-        const inputPassword = credentials.password.trim();
+        if (!inputPassword) {
+            setError('Please enter your admin password.');
+            setStatus('error');
+            return;
+        }
 
         try {
-            // 1. Direct environment variable match (set via VITE_ADMIN_PASSWORD in Netlify)
-            if (configuredAdminPassword && inputEmail === configuredAdminEmail && inputPassword === configuredAdminPassword) {
-                // Also attempt Supabase sign-in in the background if configured
+            // 1. Direct password match (from VITE_ADMIN_PASSWORD or default)
+            if (inputPassword === configuredAdminPassword) {
+                // Background attempt for Supabase Auth session if configured
                 try {
                     await supabase.auth.signInWithPassword({
-                        email: credentials.email,
-                        password: credentials.password
+                        email: inputEmail,
+                        password: inputPassword
                     });
                 } catch {
-                    // Safe to proceed with environment variable authentication
+                    // Safe to proceed with environment variable auth
                 }
 
                 localStorage.setItem('begena_admin_auth', 'true');
@@ -41,33 +49,30 @@ const AdminLogin = () => {
                 return;
             }
 
-            // 2. Supabase Auth sign-in
-            const { data, error: signInError } = await supabase.auth.signInWithPassword({
-                email: credentials.email,
-                password: credentials.password
-            });
+            // 2. Supabase Auth sign-in with email & password
+            if (showEmailInput && email.trim()) {
+                const { data, error: signInError } = await supabase.auth.signInWithPassword({
+                    email: inputEmail,
+                    password: inputPassword
+                });
 
-            if (signInError) {
-                if (configuredAdminPassword && (inputEmail !== configuredAdminEmail || inputPassword !== configuredAdminPassword)) {
-                    setError('Invalid email or password.');
-                } else {
+                if (signInError) {
                     setError(signInError.message || 'Invalid credentials');
-                }
-                setStatus('error');
-            } else if (data.session) {
-                // Security check: Must match the configured admin email
-                if (data.session.user.email.toLowerCase() !== configuredAdminEmail) {
-                    await supabase.auth.signOut();
-                    setError(`Access denied. This portal is restricted to authorized administrator (${configuredAdminEmail}).`);
                     setStatus('error');
                     return;
                 }
 
-                localStorage.setItem('begena_admin_auth', 'true');
-                localStorage.setItem('begena_admin_email', data.session.user.email);
-                setStatus('success');
-                navigate('/admin/dashboard');
+                if (data?.session) {
+                    localStorage.setItem('begena_admin_auth', 'true');
+                    localStorage.setItem('begena_admin_email', data.session.user.email);
+                    setStatus('success');
+                    navigate('/admin/dashboard');
+                    return;
+                }
             }
+
+            setError('Incorrect admin password. Please try again.');
+            setStatus('error');
         } catch {
             setError('Server error. Please try again.');
             setStatus('error');
@@ -84,34 +89,35 @@ const AdminLogin = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-md glass rounded-2xl p-8 md:p-12 border border-white/5 relative z-10"
             >
-                <div className="text-center mb-10">
-                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <Lock className="w-8 h-8 text-brand-red" />
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-white/10">
+                        <KeyRound className="w-8 h-8 text-brand-red" />
                     </div>
-                    <h1 className="text-2xl font-bold font-heading text-white mb-2">Owner Portal</h1>
-                    <p className="text-white/40 text-sm">Sign in to manage registrations and verify payments.</p>
+                    <h1 className="text-2xl font-bold font-heading text-white mb-2">Admin Portal</h1>
+                    <p className="text-white/40 text-sm">Enter password to access student registrations and payments.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-white/40 ml-4">Email Address</label>
-                        <div className="relative group">
-                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors">
-                                <Mail className="w-5 h-5" />
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    {showEmailInput && (
+                        <div className="space-y-2">
+                            <label className="text-[10px] uppercase font-bold tracking-widest text-white/40 ml-4">Email Address</label>
+                            <div className="relative group">
+                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors">
+                                    <Mail className="w-5 h-5" />
+                                </div>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder={configuredAdminEmail}
+                                    className="w-full pr-6 pl-14 py-4 rounded-xl bg-dark-900 border border-white/5 text-white placeholder-white/20 transition-all duration-300 focus:outline-hidden focus:border-brand-red focus:ring-4 focus:ring-brand-red/10 text-sm"
+                                />
                             </div>
-                            <input
-                                type="email"
-                                required
-                                value={credentials.email}
-                                onChange={e => setCredentials({ ...credentials, email: e.target.value })}
-                                placeholder="admin@example.com"
-                                className="w-full pr-6 pl-14 py-4 rounded-xl bg-dark-900 border border-white/5 text-white placeholder-white/20 transition-all duration-300 focus:outline-hidden focus:border-brand-red focus:ring-4 focus:ring-brand-red/10"
-                            />
                         </div>
-                    </div>
+                    )}
 
                     <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-white/40 ml-4">Password</label>
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-white/40 ml-4">Admin Password</label>
                         <div className="relative group">
                             <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors">
                                 <Lock className="w-5 h-5" />
@@ -119,12 +125,23 @@ const AdminLogin = () => {
                             <input
                                 type="password"
                                 required
-                                value={credentials.password}
-                                onChange={e => setCredentials({ ...credentials, password: e.target.value })}
-                                placeholder="••••••••"
-                                className="w-full pr-6 pl-14 py-4 rounded-xl bg-dark-900 border border-white/5 text-white placeholder-white/20 transition-all duration-300 focus:outline-hidden focus:border-brand-red focus:ring-4 focus:ring-brand-red/10"
+                                autoFocus
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                placeholder="Enter admin password"
+                                className="w-full pr-6 pl-14 py-4 rounded-xl bg-dark-900 border border-white/5 text-white placeholder-white/20 transition-all duration-300 focus:outline-hidden focus:border-brand-red focus:ring-4 focus:ring-brand-red/10 text-sm"
                             />
                         </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                        <button
+                            type="button"
+                            onClick={() => setShowEmailInput(!showEmailInput)}
+                            className="text-[11px] text-white/40 hover:text-white transition-colors cursor-pointer"
+                        >
+                            {showEmailInput ? 'Password only sign-in' : 'Sign in with custom email'}
+                        </button>
                     </div>
 
                     {error && (
@@ -141,13 +158,13 @@ const AdminLogin = () => {
                     <button
                         type="submit"
                         disabled={status === 'loading'}
-                        className="w-full py-4 rounded-xl bg-brand-red text-white font-bold tracking-wide hover:shadow-[0_0_30px_rgba(152,28,0,0.3)] transition-all flex items-center justify-center gap-3 group disabled:opacity-50"
+                        className="w-full py-4 rounded-xl bg-brand-red text-white font-bold tracking-wide hover:shadow-[0_0_30px_rgba(152,28,0,0.3)] transition-all flex items-center justify-center gap-3 group disabled:opacity-50 cursor-pointer"
                     >
                         {status === 'loading' ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                             <>
-                                Sign In
+                                Unlock Dashboard
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}

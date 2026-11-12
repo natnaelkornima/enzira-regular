@@ -27,7 +27,8 @@ const AdminDashboard = () => {
         (r.fullName && r.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (r.phoneNumber && r.phoneNumber.includes(searchQuery)) ||
         (r.username && r.username.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (r.telegram && r.telegram.toLowerCase().includes(searchQuery.toLowerCase()))
+        (r.telegram && r.telegram.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (r.plan && r.plan.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     useEffect(() => {
@@ -63,6 +64,7 @@ const AdminDashboard = () => {
                     phoneNumber: r.phone_number || '',
                     username: r.username || r.telegram || '',
                     telegram: r.telegram || r.username || '',
+                    plan: r.plan || 'Standard',
                     registrationDate: r.created_at || new Date().toISOString(),
                     paymentReceiptPath: r.uploaded_screenshot || r.payment_receipt_path || '',
                     status: r.status || 'pending'
@@ -305,13 +307,14 @@ const AdminDashboard = () => {
         }
 
         // Table
-        const tableColumn = ["#", "Date", "Full Name", "Phone", "Telegram", "Status"];
+        const tableColumn = ["#", "Date", "Full Name", "Phone", "Telegram", "Plan", "Status"];
         const tableRows = filteredRegistrations.map((r, index) => [
             index + 1,
             new Date(r.registrationDate).toLocaleDateString(),
             r.fullName,
-            `${r.countryCode} ${r.phoneNumber}`,
+            `${r.countryCode} ${r.phoneNumber}`.trim(),
             r.telegram,
+            r.plan || '-',
             r.status.toUpperCase()
         ]);
 
@@ -386,20 +389,38 @@ const AdminDashboard = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-110 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-black/85 backdrop-blur-md z-110 flex items-center justify-center p-4"
                         onClick={() => setViewingReceipt(null)}
                     >
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-dark-950 border border-white/10 rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-hidden"
+                            className="bg-dark-950 border border-white/10 rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                            <div className="flex items-start justify-between pb-4 border-b border-white/10 mb-4 shrink-0">
                                 <div>
-                                    <h3 className="text-white font-bold text-base">Payment Receipt</h3>
-                                    <p className="text-white/40 text-xs">{viewingReceipt.name}</p>
+                                    <h3 className="text-white font-bold text-lg">{viewingReceipt.name}</h3>
+                                    <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-white/50">
+                                        {viewingReceipt.phone && (
+                                            <span className="flex items-center gap-1">
+                                                <Phone className="w-3 h-3 text-white/40" />
+                                                {viewingReceipt.phone}
+                                            </span>
+                                        )}
+                                        {viewingReceipt.telegram && (
+                                            <span className="flex items-center gap-1 text-brand-red">
+                                                <Send className="w-3 h-3 text-brand-red/60" />
+                                                {viewingReceipt.telegram}
+                                            </span>
+                                        )}
+                                        {viewingReceipt.plan && (
+                                            <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/80 text-[10px] font-semibold">
+                                                {viewingReceipt.plan}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {viewingReceipt.url?.startsWith('http') && (
@@ -421,13 +442,45 @@ const AdminDashboard = () => {
                                     </button>
                                 </div>
                             </div>
-                            <div className="max-h-[70vh] overflow-auto flex items-center justify-center bg-black/40 rounded-xl p-2">
-                                <img
-                                    src={viewingReceipt.url}
-                                    alt="Payment Receipt"
-                                    className="max-h-[65vh] max-w-full object-contain rounded-lg shadow-md"
-                                />
+
+                            <div className="flex-1 overflow-auto flex items-center justify-center bg-black/50 rounded-xl p-3 min-h-[250px] border border-white/5">
+                                {viewingReceipt.url ? (
+                                    <img
+                                        src={viewingReceipt.url}
+                                        alt="Payment Receipt"
+                                        className="max-h-[55vh] max-w-full object-contain rounded-lg shadow-md"
+                                    />
+                                ) : (
+                                    <div className="text-white/30 text-sm italic">
+                                        No screenshot uploaded
+                                    </div>
+                                )}
                             </div>
+
+                            {viewingReceipt.id && viewingReceipt.status === 'pending' && (
+                                <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10 mt-4 shrink-0">
+                                    <button
+                                        onClick={() => {
+                                            handleDeclinePayment(viewingReceipt.id);
+                                            setViewingReceipt(null);
+                                        }}
+                                        className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+                                    >
+                                        <X className="w-4 h-4" />
+                                        Decline
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            handleVerifyPayment(viewingReceipt.id);
+                                            setViewingReceipt(null);
+                                        }}
+                                        className="px-4 py-2 rounded-xl bg-green-500 text-black hover:bg-green-400 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-green-500/20"
+                                    >
+                                        <CheckCircle className="w-4 h-4" />
+                                        Approve Payment
+                                    </button>
+                                </div>
+                            )}
                         </motion.div>
                     </motion.div>
                 )}
@@ -686,8 +739,9 @@ const AdminDashboard = () => {
                                 <tr>
                                     <th className="px-6 py-4 font-bold">Student Name</th>
                                     <th className="px-6 py-4 font-bold">Contact Info</th>
+                                    <th className="px-6 py-4 font-bold">Plan</th>
                                     <th className="px-6 py-4 font-bold">Registration Date</th>
-                                    <th className="px-6 py-4 font-bold">Receipt</th>
+                                    <th className="px-6 py-4 font-bold">Screenshot</th>
                                     <th className="px-6 py-4 font-bold">Status</th>
                                     <th className="px-6 py-4 font-bold text-right">Actions</th>
                                 </tr>
@@ -712,29 +766,46 @@ const AdminDashboard = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-1">
                                                 <div className="flex items-center gap-2 text-white/60">
-                                                    <Phone className="w-3 h-3" />
+                                                    <Phone className="w-3 h-3 text-white/30" />
                                                     <span>{r.countryCode} {r.phoneNumber}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-brand-red/80">
-                                                    <Send className="w-3 h-3" />
+                                                    <Send className="w-3 h-3 text-brand-red/40" />
                                                     <span>{r.telegram}</span>
                                                 </div>
                                             </div>
                                         </td>
+                                        <td className="px-6 py-4">
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/5 text-white/80 border border-white/10 max-w-[200px] truncate" title={r.plan}>
+                                                {r.plan || 'Standard Plan'}
+                                            </span>
+                                        </td>
                                         <td className="px-6 py-4 text-white/40 text-xs">
                                             <div className="flex items-center gap-2">
-                                                <Calendar className="w-3 h-3" />
+                                                <Calendar className="w-3 h-3 text-white/30" />
                                                 {new Date(r.registrationDate).toLocaleDateString()}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <button
-                                                type="button"
-                                                onClick={() => setViewingReceipt({ url: r.paymentReceiptPath, name: r.fullName })}
-                                                className="text-xs text-brand-red hover:underline font-medium cursor-pointer"
-                                            >
-                                                View Image
-                                            </button>
+                                            {r.paymentReceiptPath ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setViewingReceipt({
+                                                        url: r.paymentReceiptPath,
+                                                        name: r.fullName,
+                                                        phone: `${r.countryCode} ${r.phoneNumber}`.trim(),
+                                                        telegram: r.telegram,
+                                                        plan: r.plan,
+                                                        status: r.status,
+                                                        id: r._id
+                                                    })}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-red/10 hover:bg-brand-red/20 text-brand-red text-xs font-bold transition-all cursor-pointer"
+                                                >
+                                                    View Screenshot
+                                                </button>
+                                            ) : (
+                                                <span className="text-white/20 text-xs italic">No screenshot</span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${r.status === 'verified' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
@@ -753,7 +824,7 @@ const AdminDashboard = () => {
                                                     <>
                                                         <button
                                                             onClick={() => handleVerifyPayment(r._id)}
-                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 text-[11px] font-bold transition-colors"
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 text-[11px] font-bold transition-colors cursor-pointer"
                                                             title="Approve Payment"
                                                         >
                                                             <CheckCircle className="w-3.5 h-3.5" />
@@ -761,7 +832,7 @@ const AdminDashboard = () => {
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeclinePayment(r._id)}
-                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[11px] font-bold transition-colors"
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[11px] font-bold transition-colors cursor-pointer"
                                                             title="Decline Payment"
                                                         >
                                                             <X className="w-3.5 h-3.5" />
@@ -772,7 +843,7 @@ const AdminDashboard = () => {
                                                 {r.telegram && (
                                                     <button
                                                         onClick={() => handleSendDM(r.telegram)}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-[11px] font-bold transition-colors"
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-[11px] font-bold transition-colors cursor-pointer"
                                                         title="Send Telegram DM"
                                                     >
                                                         <ExternalLink className="w-3.5 h-3.5" />
@@ -781,7 +852,7 @@ const AdminDashboard = () => {
                                                 )}
                                                 <button
                                                     onClick={() => handleDeleteUser(r._id)}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-400 text-[11px] font-bold transition-colors"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-400 text-[11px] font-bold transition-colors cursor-pointer"
                                                     title="Remove Student"
                                                 >
                                                     <Trash2 className="w-3.5 h-3.5" />
@@ -793,7 +864,7 @@ const AdminDashboard = () => {
                                 ))}
                                 {filteredRegistrations.length === 0 && (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center text-white/40">
+                                        <td colSpan="7" className="px-6 py-12 text-center text-white/40">
                                             No registrations found.
                                         </td>
                                     </tr>
