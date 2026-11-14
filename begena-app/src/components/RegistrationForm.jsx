@@ -5,6 +5,7 @@ import SuccessModal from './SuccessModal';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { compressImage } from '../lib/imageUtils';
 import { useLanguage } from '../lib/LanguageContext';
+import { useLocationData } from '../lib/LocationContext';
 import { findPricingTier } from '../lib/translations';
 import telebirrLogo from '../assets/telebirr-logo.png';
 import cbeLogo from '../assets/cbe-logo.png';
@@ -88,6 +89,7 @@ const PaymentCard = ({ name, accountNumber, logo, color }) => {
 
 const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
     const { t, language } = useLanguage();
+    const { isOutsideEthiopia, countryCode: currentCountryCode, setCountryCode } = useLocationData();
     const [formData, setFormData] = useState({
         fullName: '',
         countryCode: '+251',
@@ -106,13 +108,13 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
     const [pickerPlanKey, setPickerPlanKey] = useState('individual');
     const [isPlanPickerOpen, setIsPlanPickerOpen] = useState(false);
 
-    const selectedDetails = findPricingTier(language, selectedTierId);
+    const selectedDetails = findPricingTier(language, selectedTierId, isOutsideEthiopia);
     const showPlanPicker = !selectedDetails || isPlanPickerOpen;
     const planError = !selectedDetails ? errors.plan : '';
     const pricingPlans = t('pricing.plans');
     const pickerTiers = Array.isArray(pricingPlans?.[pickerPlanKey]?.tiers) ? pricingPlans[pickerPlanKey].tiers : [];
     const selectedPlanSummary = selectedDetails
-        ? `${selectedDetails.plan.name} · ${selectedDetails.tier.duration} (${selectedDetails.tier.price} ${t('pricing.currency')} ${t('pricing.perMonth')})`
+        ? `${selectedDetails.plan.name} · ${selectedDetails.tier.duration} (${selectedDetails.tier.displayPrice || selectedDetails.tier.price} ${selectedDetails.tier.displayCurrency || t('pricing.currency')} ${t('pricing.perMonth')})`
         : '';
 
     const countryPickerRef = useRef(null);
@@ -685,6 +687,7 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                                                 type="button"
                                                                                 onClick={() => {
                                                                                     setFormData(prev => ({ ...prev, countryCode: c.code }));
+                                                                                    setCountryCode(c.iso.toUpperCase());
                                                                                     setIsCountryPickerOpen(false);
                                                                                 }}
                                                                                 className={`w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/5 transition-colors text-left ${formData.countryCode === c.code ? 'bg-brand-red/10' : ''}`}
@@ -785,7 +788,9 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                         </div>
                                                         <div className="text-right shrink-0">
                                                             <p className="text-sm font-black text-white">
-                                                                {selectedDetails.tier.price} {t('pricing.currency')}
+                                                                {selectedDetails.tier.displayCurrency === '$' && '$ '}
+                                                                {selectedDetails.tier.displayPrice || selectedDetails.tier.price}
+                                                                {selectedDetails.tier.displayCurrency !== '$' && ` ${selectedDetails.tier.displayCurrency || t('pricing.currency')}`}
                                                             </p>
                                                             <p className="text-[9px] text-white/40">{t('pricing.perMonth')}</p>
                                                         </div>
@@ -819,6 +824,8 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                         <div className={`grid gap-2 ${pickerTiers.length === 1 ? 'grid-cols-1' : 'grid-cols-3'}`}>
                                                             {pickerTiers.map((tier) => {
                                                                 const isSelected = selectedTierId === tier.id;
+                                                                const currentTierPrice = isOutsideEthiopia && tier.priceUsd ? tier.priceUsd : tier.price;
+                                                                const currentTierCurrency = isOutsideEthiopia ? '$' : t('pricing.currency');
                                                                 return (
                                                                     <button
                                                                         key={tier.id}
@@ -833,7 +840,7 @@ const RegistrationForm = ({ selectedTierId, onSelectPlanTier }) => {
                                                                         <div>
                                                                             <span className="text-[10px] font-bold block">{tier.duration}</span>
                                                                             <span className={`text-xs font-black block mt-0.5 ${isSelected ? 'text-white' : 'text-brand-red'}`}>
-                                                                                {tier.price} {t('pricing.currency')}
+                                                                                {isOutsideEthiopia ? `$ ${currentTierPrice}` : `${currentTierPrice} ${currentTierCurrency}`}
                                                                             </span>
                                                                             <span className={`text-[9px] block mt-0.5 ${isSelected ? 'text-white/80' : 'text-white/40'}`}>
                                                                                 {tier.daysPerWeek}

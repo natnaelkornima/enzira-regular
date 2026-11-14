@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from './lib/LanguageContext';
+import { LocationProvider } from './lib/LocationContext';
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -11,6 +12,7 @@ import AdminLogin from './components/admin/AdminLogin'
 import AdminDashboard from './components/admin/AdminDashboard'
 import CheckStatus from './components/CheckStatus'
 import Pricing from './components/Pricing'
+import TermsModal from './components/TermsModal'
 
 const ScrollManager = () => {
   const { pathname, hash } = useLocation();
@@ -38,29 +40,32 @@ function App() {
   return (
     <Router>
       <ScrollManager />
-      <LanguageProvider>
-        <div className="min-h-screen bg-dark-950">
-          <Routes>
-            <Route path="/" element={
-              <>
-                <Navbar />
-                <Hero />
-                <About />
-                <MarqueeGallery />
-                <Pricing selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
-                <RegistrationForm selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
-                <Footer />
-              </>
-            } />
-            <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/status" element={<CheckStatus />} />
-            <Route path="/index.html" element={<Navigate to="/" replace />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-      </LanguageProvider>
+      <LocationProvider>
+        <LanguageProvider>
+          <div className="min-h-screen bg-dark-950">
+            <TermsModal />
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Navbar />
+                  <Hero />
+                  <About />
+                  <MarqueeGallery />
+                  <Pricing selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
+                  <RegistrationForm selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
+                  <Footer />
+                </>
+              } />
+              <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/status" element={<CheckStatus />} />
+              <Route path="/index.html" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+        </LanguageProvider>
+      </LocationProvider>
     </Router>
   )
 }

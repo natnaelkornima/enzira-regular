@@ -6,6 +6,7 @@ export const translations = {
             about: 'Our Service',
             pricing: 'Pricing',
             training: 'Training',
+            terms: 'Terms',
             contact: 'Contact',
             checkStatus: 'Check Status',
             adminLogin: 'Admin Login',
@@ -59,8 +60,11 @@ export const translations = {
                 'First select between our 1-on-1 Individual Plan or Group Plan (5 people), then choose the duration and schedule that fits you best.',
             step1Label: 'Step 1 · Select Plan Type',
             step2Label: 'Step 2 · Available Packages',
+            locationDomestic: 'Inside Ethiopia (ETB)',
+            locationInternational: 'Outside Ethiopia (USD)',
             perMonth: '/ month',
             currency: 'Birr',
+            currencyUsd: '$',
             onlineLabel: '100% Online Live Classes',
             enrollAction: 'Enroll with This Plan',
             selectedBadge: 'Selected',
@@ -73,27 +77,30 @@ export const translations = {
                     tiers: [
                         {
                             id: 'individual-3m',
-                            duration: '3 Months',
-                            tag: 'Intensive',
+                            duration: '3 Months (5 Days / Week)',
+                            tag: 'Intensive · 5 Days',
                             daysPerWeek: '5 Days / Week',
                             hoursPerDay: '1 hr 30 min / Day',
                             price: '10,000',
+                            priceUsd: '190',
                         },
                         {
                             id: 'individual-6m',
-                            duration: '6 Months',
-                            tag: 'Balanced',
+                            duration: '6 Months (3 Days / Week)',
+                            tag: 'Balanced · 3 Days',
                             daysPerWeek: '3 Days / Week',
                             hoursPerDay: '1 hr 30 min / Day',
                             price: '7,500',
+                            priceUsd: '150',
                         },
                         {
                             id: 'individual-9m',
-                            duration: '9 Months',
-                            tag: 'Steady Pace',
+                            duration: '9 Months (2 Days / Week)',
+                            tag: 'Steady Pace · 2 Days',
                             daysPerWeek: '2 Days / Week',
                             hoursPerDay: '1 hr 30 min / Day',
                             price: '5,000',
+                            priceUsd: '100',
                         },
                     ],
                 },
@@ -105,15 +112,25 @@ export const translations = {
                     tiers: [
                         {
                             id: 'group-unified',
-                            duration: '6 Months',
+                            duration: '6 Months (3 Days / Week)',
                             tag: 'Unified Program',
                             daysPerWeek: '3 Days / Week',
                             hoursPerDay: '1 hr 30 min / Day',
                             price: '1,833',
+                            priceUsd: '40',
                         },
                     ],
                 },
             },
+        },
+        // Terms
+        terms: {
+            bannerTitle: 'Terms of Service & Guidelines',
+            bannerSubtitle: 'Welcome to Enzira Begena!',
+            bannerSnippet: 'Welcome to Enzira Begena! Learn the sacred art of the Begena from anywhere in the world. Please review and agree to our training guidelines.',
+            readFull: 'Read Full Terms',
+            agree: 'I Agree',
+            close: 'Close',
         },
         // Registration
         registration: {
@@ -191,6 +208,7 @@ export const translations = {
             trainingModules: 'Training Modules',
             globalAdmissions: 'Global Admissions',
             sacredHistory: 'Sacred History',
+            terms: 'Terms of Service',
             connect: 'Connect',
             emailUs: 'Email Us',
             callCenter: 'Call Center',
@@ -205,6 +223,7 @@ export const translations = {
             about: 'አገልግሎታችን',
             pricing: 'ክፍያ',
             training: 'ስልጠና',
+            terms: 'ውሎች',
             contact: 'ያግኙን',
             checkStatus: 'ሁኔታ ይፈልጉ',
             adminLogin: 'የአስተዳዳሪ መግቢያ',
@@ -257,8 +276,11 @@ export const translations = {
                 'በመጀመሪያ የግል (1 ለ 1) ወይም የቡድን (5 ሰው) ስልጠና ይምረጡ፤ በመቀጠል ከፕሮግራምዎ ጋር የሚስማማውን የጊዜና የክፍያ አማራጭ ይመልከቱ።',
             step1Label: 'ደረጃ 1 · የስልጠና ዓይነት ይምረጡ',
             step2Label: 'ደረጃ 2 · የጊዜና የክፍያ አማራጮች',
+            locationDomestic: 'በኢትዮጵያ (ብር)',
+            locationInternational: 'በውጭ ሀገር (USD)',
             perMonth: '/ በወር',
             currency: 'ብር',
+            currencyUsd: '$',
             onlineLabel: 'ሙሉ በሙሉ በኦንላይን',
             enrollAction: 'በዚህ እቅድ ይመዝገቡ',
             selectedBadge: 'የተመረጠ',
@@ -271,27 +293,30 @@ export const translations = {
                     tiers: [
                         {
                             id: 'individual-3m',
-                            duration: 'የ3 ወር',
-                            tag: 'ፈጣን',
+                            duration: 'የ3 ወር (በሳምንት 5 ቀን)',
+                            tag: 'ፈጣን · 5 ቀን',
                             daysPerWeek: 'በሳምንት 5 ቀን',
                             hoursPerDay: 'በቀን 1:30',
                             price: '10,000',
+                            priceUsd: '190',
                         },
                         {
                             id: 'individual-6m',
-                            duration: 'የ6 ወር',
-                            tag: 'መካከለኛ',
+                            duration: 'የ6 ወር (በሳምንት 3 ቀን)',
+                            tag: 'መካከለኛ · 3 ቀን',
                             daysPerWeek: 'በሳምንት 3 ቀን',
                             hoursPerDay: 'በቀን 1:30',
                             price: '7,500',
+                            priceUsd: '150',
                         },
                         {
                             id: 'individual-9m',
-                            duration: 'የ9 ወር',
-                            tag: 'ረጋ ያለ',
+                            duration: 'የ9 ወር (በሳምንት 2 ቀን)',
+                            tag: 'ረጋ ያለ · 2 ቀን',
                             daysPerWeek: 'በሳምንት 2 ቀን',
                             hoursPerDay: 'በቀን 1:30',
                             price: '5,000',
+                            priceUsd: '100',
                         },
                     ],
                 },
@@ -303,15 +328,25 @@ export const translations = {
                     tiers: [
                         {
                             id: 'group-unified',
-                            duration: 'የ6 ወር',
+                            duration: 'የ6 ወር (በሳምንት 3 ቀን)',
                             tag: 'የተጠቃለለ',
                             daysPerWeek: 'በሳምንት 3 ቀን',
                             hoursPerDay: 'በቀን 1:30',
                             price: '1,833',
+                            priceUsd: '40',
                         },
                     ],
                 },
             },
+        },
+        // Terms
+        terms: {
+            bannerTitle: 'የአገልግሎት ውሎች እና መመሪያዎች',
+            bannerSubtitle: 'እንኳን ወደ እንዚራ በገና በደኅና መጡ!',
+            bannerSnippet: 'እንኳን ወደ እንዚራ በገና በደኅና መጡ! መንፈሳዊውን የበገና ጥበብ እና ድርደራ በዓለም ዙሪያ ለሚገኙ ኢትዮጵያውያን ተደራሽ ለማድረግ የተመሠረተ የጥበብ ማዕከል ነው። ትምህርታችንን ከመጀመርዎ በፊት እባክዎ ውሎችን ይመልከቱ።',
+            readFull: 'ሙሉውን አንብብ',
+            agree: 'እስማማለሁ',
+            close: 'ዝጋ',
         },
         // Registration
         registration: {
@@ -389,6 +424,7 @@ export const translations = {
             trainingModules: 'የስልጠና ሞጁሎች',
             globalAdmissions: 'አለም አቀፍ ምዝገባ',
             sacredHistory: 'ቅዱስ ታሪክ',
+            terms: 'የአገልግሎት ውሎች',
             connect: 'ያግኙን',
             emailUs: 'ኢሜይል ይላኩልን',
             callCenter: 'የጥሪ ማእከል',
@@ -398,14 +434,24 @@ export const translations = {
     },
 };
 
-export const findPricingTier = (lang, tierId) => {
+export const findPricingTier = (lang, tierId, isOutsideEthiopia = false) => {
     const pricingPlans = translations[lang]?.pricing?.plans || translations.en.pricing.plans;
     if (!pricingPlans || !tierId) return null;
     for (const planKey of ['individual', 'group']) {
         const plan = pricingPlans[planKey];
         const tier = plan?.tiers?.find((item) => item.id === tierId);
         if (tier) {
-            return { planKey, plan, tier };
+            const displayPrice = isOutsideEthiopia && tier.priceUsd ? tier.priceUsd : tier.price;
+            const displayCurrency = isOutsideEthiopia ? '$' : (lang === 'am' ? 'ብር' : 'Birr');
+            return {
+                planKey,
+                plan,
+                tier: {
+                    ...tier,
+                    displayPrice,
+                    displayCurrency,
+                },
+            };
         }
     }
     // Fallback for legacy group tier IDs
@@ -413,7 +459,17 @@ export const findPricingTier = (lang, tierId) => {
         const groupPlan = pricingPlans.group;
         const fallbackTier = groupPlan?.tiers?.[0];
         if (fallbackTier) {
-            return { planKey: 'group', plan: groupPlan, tier: fallbackTier };
+            const displayPrice = isOutsideEthiopia && fallbackTier.priceUsd ? fallbackTier.priceUsd : fallbackTier.price;
+            const displayCurrency = isOutsideEthiopia ? '$' : (lang === 'am' ? 'ብር' : 'Birr');
+            return {
+                planKey: 'group',
+                plan: groupPlan,
+                tier: {
+                    ...fallbackTier,
+                    displayPrice,
+                    displayCurrency,
+                },
+            };
         }
     }
     return null;

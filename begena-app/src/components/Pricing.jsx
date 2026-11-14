@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, User, Calendar, Clock, Globe, ArrowRight, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
+import { useLocationData } from '../lib/LocationContext';
 
 const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
     const { t, language } = useLanguage();
+    const { isOutsideEthiopia, setIsOutsideEthiopia } = useLocationData();
     const [selectedPlan, setSelectedPlan] = useState('individual');
 
     const planOptions = [
@@ -52,9 +54,40 @@ const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
                         {t('pricing.titleLine1')}{' '}
                         <span className="italic text-white">{t('pricing.titleLine2')}</span>
                     </h2>
-                    <p className="text-white/40 text-lg leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-white/40 text-lg leading-relaxed max-w-2xl mx-auto mb-8">
                         {t('pricing.description')}
                     </p>
+
+                    {/* Location & Currency Switcher */}
+                    <div className="flex justify-center">
+                        <div className="inline-flex items-center p-1 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-md shadow-lg">
+                            <button
+                                type="button"
+                                onClick={() => setIsOutsideEthiopia(false)}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                                    !isOutsideEthiopia
+                                        ? 'bg-brand-red text-white shadow-md shadow-brand-red/25'
+                                        : 'text-white/50 hover:text-white'
+                                }`}
+                            >
+                                <span>🇪🇹</span>
+                                <span>{t('pricing.locationDomestic')}</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsOutsideEthiopia(true)}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                                    isOutsideEthiopia
+                                        ? 'bg-brand-red text-white shadow-md shadow-brand-red/25'
+                                        : 'text-white/50 hover:text-white'
+                                }`}
+                            >
+                                <span>🌍</span>
+                                <span>{t('pricing.locationInternational')}</span>
+                                <span className="text-[10px] font-mono opacity-80">($ USD)</span>
+                            </button>
+                        </div>
+                    </div>
                 </motion.div>
 
                 {/* Step 1: Plan Selector (Group vs Individual) */}
@@ -151,6 +184,8 @@ const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
                             {tiers.map((tier, index) => {
                                 const isHighlighted = tiers.length === 1 || index === 1;
                                 const isTierSelected = selectedTierId === tier.id;
+                                const currentPrice = isOutsideEthiopia && tier.priceUsd ? tier.priceUsd : tier.price;
+                                const currentCurrency = isOutsideEthiopia ? '$' : t('pricing.currency');
                                 return (
                                     <div
                                         key={tier.id}
@@ -184,12 +219,23 @@ const Pricing = ({ selectedTierId, onSelectPlanTier }) => {
                                             {/* Monthly Price */}
                                             <div className="pb-6 mb-6 border-b border-white/10">
                                                 <div className="flex items-baseline gap-2">
+                                                    {isOutsideEthiopia && (
+                                                        <span className="font-heading text-3xl font-black text-brand-red">
+                                                            $
+                                                        </span>
+                                                    )}
                                                     <span className="font-heading text-4xl font-black text-white tracking-tight">
-                                                        {tier.price}
+                                                        {currentPrice}
                                                     </span>
-                                                    <span className="text-sm font-bold text-white/70">
-                                                        {t('pricing.currency')}
-                                                    </span>
+                                                    {!isOutsideEthiopia ? (
+                                                        <span className="text-sm font-bold text-white/70">
+                                                            {currentCurrency}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-xs font-bold text-white/50 uppercase tracking-wider">
+                                                            USD
+                                                        </span>
+                                                    )}
                                                     <span className="text-xs text-white/40">
                                                         {t('pricing.perMonth')}
                                                     </span>

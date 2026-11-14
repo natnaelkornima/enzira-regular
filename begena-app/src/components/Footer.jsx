@@ -23,12 +23,24 @@ const Footer = () => {
         { name: t('footer.pricing'), to: '/#pricing', hash: 'pricing' },
         { name: t('footer.trainingModules'), to: '/#about', hash: 'about' },
         { name: t('footer.globalAdmissions'), to: '/#register', hash: 'register' },
+        {
+            name: t('footer.terms') || 'Terms of Service',
+            to: '#terms',
+            onClick: (e) => {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent('open-enzira-terms'));
+            }
+        },
     ];
 
-    const handleQuickLinkClick = (e, hash) => {
-        if (hash && location.pathname === '/') {
+    const handleQuickLinkClick = (e, link) => {
+        if (link.onClick) {
+            link.onClick(e);
+            return;
+        }
+        if (link.hash && location.pathname === '/') {
             e.preventDefault();
-            document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(link.hash)?.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
@@ -75,7 +87,7 @@ const Footer = () => {
                                 <li key={i}>
                                     <Link
                                         to={link.to}
-                                        onClick={(e) => handleQuickLinkClick(e, link.hash)}
+                                        onClick={(e) => handleQuickLinkClick(e, link)}
                                         className="text-sm text-white/30 hover:text-brand-red transition-all flex items-center gap-2 group"
                                     >
                                         <div className="w-1 h-1 rounded-full bg-brand-red scale-0 group-hover:scale-100 transition-transform" />
