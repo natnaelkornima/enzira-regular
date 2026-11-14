@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=begena-app",
-    "build": "npm run build --workspace=begena-app && rm -rf dist && cp -r begena-app/dist dist",
+    "build": "npm run build --workspace=begena-app && node -e \"const fs=require('fs'); fs.rmSync('dist', {recursive:true, force:true}); fs.cpSync('begena-app/dist', 'dist', {recursive:true});\"",
     "lint": "npm run lint --workspace=begena-app",
     "preview": "npm run preview --workspace=begena-app"
   }
