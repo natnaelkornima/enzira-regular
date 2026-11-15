@@ -11,7 +11,6 @@ import Footer from './components/Footer'
 import AdminLogin from './components/admin/AdminLogin'
 import AdminDashboard from './components/admin/AdminDashboard'
 import CheckStatus from './components/CheckStatus'
-import Pricing from './components/Pricing'
 import TermsModal from './components/TermsModal'
 
 const ScrollManager = () => {
@@ -51,7 +50,6 @@ function App() {
                   <Hero />
                   <About />
                   <MarqueeGallery />
-                  <Pricing selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
                   <RegistrationForm selectedTierId={selectedTierId} onSelectPlanTier={setSelectedTierId} />
                   <Footer />
                 </>
