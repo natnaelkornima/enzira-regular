@@ -34,7 +34,9 @@ const CheckStatus = () => {
             } else {
                 setResult({
                     fullName: data.name || data.full_name || 'Student',
-                    phone: data.country_code ? `${data.country_code} ${data.phone_number}` : data.phone_number,
+                    phone: data.country_code && !data.phone_number?.startsWith('+')
+                        ? `${data.country_code} ${data.phone_number}`
+                        : data.phone_number,
                     telegram: data.username || data.telegram || '-',
                     status: data.status,
                     date: new Date(data.created_at || Date.now()).toLocaleDateString(language === 'am' ? 'am-ET' : 'en-US', {

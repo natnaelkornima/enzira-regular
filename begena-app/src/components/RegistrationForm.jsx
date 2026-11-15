@@ -443,69 +443,117 @@ const RegistrationForm = ({ selectedTierId: externalTierId, onSelectPlanTier }) 
                 throw new Error('Could not process payment screenshot. Please choose an image file and try again.');
             }
 
-            // 3. Database insert with adaptive payload schema
+            // 3. Database insert with self-adapting payload schema
             const fullPhone = `${formData.countryCode} ${formData.phoneNumber}`.trim();
-            const candidatePayloads = [
-                {
-                    name: formData.fullName,
-                    full_name: formData.fullName,
-                    phone_number: formData.phoneNumber,
-                    country_code: formData.countryCode,
-                    username: formData.telegram,
-                    telegram: formData.telegram,
-                    uploaded_screenshot: receiptFinalPath,
-                    payment_receipt_path: receiptFinalPath,
-                    plan: selectedPlanSummary,
-                    status: 'pending',
-                },
-                {
-                    name: formData.fullName,
-                    full_name: formData.fullName,
-                    phone_number: formData.phoneNumber,
-                    country_code: formData.countryCode,
-                    username: formData.telegram,
-                    telegram: formData.telegram,
-                    uploaded_screenshot: receiptFinalPath,
-                    payment_receipt_path: receiptFinalPath,
-                    status: 'pending',
-                },
-                {
-                    name: formData.fullName,
-                    phone_number: fullPhone,
-                    username: formData.telegram,
-                    uploaded_screenshot: receiptFinalPath,
-                    status: 'pending',
-                },
-                {
-                    full_name: formData.fullName,
-                    country_code: formData.countryCode,
-                    phone_number: formData.phoneNumber,
-                    telegram: formData.telegram,
-                    payment_receipt_path: receiptFinalPath,
-                    status: 'pending',
-                },
-            ];
+
+            let payload = {
+                name: formData.fullName,
+                full_name: formData.fullName,
+                phone_number: formData.phoneNumber,
+                country_code: formData.countryCode,
+                username: formData.telegram,
+                telegram: formData.telegram,
+                uploaded_screenshot: receiptFinalPath,
+                payment_receipt_path: receiptFinalPath,
+                plan: selectedPlanSummary,
+                status: 'pending',
+            };
 
             let insertSuccess = false;
             let lastDbError = null;
 
-            for (const payload of candidatePayloads) {
+            // Dynamically prune any column rejected by Supabase PostgREST schema cache
+            for (let attempt = 0; attempt < 10; attempt++) {
                 const { error: dbError } = await supabase.from('registrations').insert([payload]);
 
                 if (!dbError) {
                     insertSuccess = true;
                     break;
-                } else {
-                    lastDbError = dbError;
-                    if (dbError.message && dbError.message.includes('column') && dbError.message.includes('does not exist')) {
+                }
+
+                lastDbError = dbError;
+                const errorMsg = dbError.message || '';
+
+                // Extract missing column name from PostgREST or PostgreSQL error:
+                // e.g. "Could not find the 'country_code' column of 'registrations' in the schema cache"
+                // or 'column "country_code" does not exist'
+                const matchSchemaCache = errorMsg.match(/Could not find the ['"]([^'"]+)['"] column/i);
+                const matchPgColumn = errorMsg.match(/column ['"]([^'"]+)['"].*does not exist/i);
+                const missingColumn = matchSchemaCache?.[1] || matchPgColumn?.[1];
+
+                if (missingColumn && missingColumn in payload) {
+                    console.warn(`Column '${missingColumn}' not found in Supabase schema cache. Pruning and retrying...`);
+                    delete payload[missingColumn];
+                    if (missingColumn === 'country_code') {
+                        payload.phone_number = fullPhone;
+                    }
+                    continue;
+                }
+
+                // If error mentions schema cache or column, prune known optional columns one by one
+                if (errorMsg.includes('schema cache') || errorMsg.includes('does not exist') || errorMsg.includes('column')) {
+                    const optionalColumns = ['country_code', 'payment_receipt_path', 'full_name', 'telegram', 'plan', 'status'];
+                    const nextToPrune = optionalColumns.find(col => col in payload);
+                    if (nextToPrune) {
+                        delete payload[nextToPrune];
+                        if (nextToPrune === 'country_code') {
+                            payload.phone_number = fullPhone;
+                        }
                         continue;
                     }
-                    break;
+                }
+
+                break;
+            }
+
+            // Fallback candidates with minimal schemas if needed
+            if (!insertSuccess) {
+                const fallbackPayloads = [
+                    {
+                        name: formData.fullName,
+                        phone_number: fullPhone,
+                        username: formData.telegram,
+                        uploaded_screenshot: receiptFinalPath,
+                        plan: selectedPlanSummary,
+                        status: 'pending',
+                    },
+                    {
+                        name: formData.fullName,
+                        phone_number: fullPhone,
+                        username: formData.telegram,
+                        uploaded_screenshot: receiptFinalPath,
+                        status: 'pending',
+                    },
+                    {
+                        name: formData.fullName,
+                        phone_number: fullPhone,
+                        username: formData.telegram,
+                        uploaded_screenshot: receiptFinalPath,
+                    },
+                    {
+                        full_name: formData.fullName,
+                        phone_number: fullPhone,
+                        telegram: formData.telegram,
+                        payment_receipt_path: receiptFinalPath,
+                        status: 'pending',
+                    },
+                ];
+
+                for (const fallback of fallbackPayloads) {
+                    const { error: fbError } = await supabase.from('registrations').insert([fallback]);
+                    if (!fbError) {
+                        insertSuccess = true;
+                        break;
+                    }
+                    lastDbError = fbError;
                 }
             }
 
             if (!insertSuccess && lastDbError) {
                 console.error('Database insert error:', lastDbError);
+                if (lastDbError.message && lastDbError.message.includes('violates row-level security')) {
+                    throw new Error('Database permission error. Please run the supabase_setup.sql script in your Supabase SQL editor to enable public registration submissions.');
+                }
                 throw new Error(lastDbError.message || 'Failed to save registration details. Please try again.');
             }
 

@@ -312,7 +312,7 @@ const AdminDashboard = () => {
             index + 1,
             new Date(r.registrationDate).toLocaleDateString(),
             r.fullName,
-            `${r.countryCode} ${r.phoneNumber}`.trim(),
+            ((r.countryCode && !r.phoneNumber?.startsWith('+') ? `${r.countryCode} ` : '') + (r.phoneNumber || '')).trim(),
             r.telegram,
             r.plan || '-',
             r.status.toUpperCase()
@@ -767,7 +767,7 @@ const AdminDashboard = () => {
                                             <div className="flex flex-col gap-1">
                                                 <div className="flex items-center gap-2 text-white/60">
                                                     <Phone className="w-3 h-3 text-white/30" />
-                                                    <span>{r.countryCode} {r.phoneNumber}</span>
+                                                    <span>{r.countryCode && !r.phoneNumber?.startsWith('+') ? `${r.countryCode} ` : ''}{r.phoneNumber}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-brand-red/80">
                                                     <Send className="w-3 h-3 text-brand-red/40" />
@@ -793,7 +793,7 @@ const AdminDashboard = () => {
                                                     onClick={() => setViewingReceipt({
                                                         url: r.paymentReceiptPath,
                                                         name: r.fullName,
-                                                        phone: `${r.countryCode} ${r.phoneNumber}`.trim(),
+                                                        phone: (r.countryCode && !r.phoneNumber?.startsWith('+') ? `${r.countryCode} ` : '') + (r.phoneNumber || ''),
                                                         telegram: r.telegram,
                                                         plan: r.plan,
                                                         status: r.status,
