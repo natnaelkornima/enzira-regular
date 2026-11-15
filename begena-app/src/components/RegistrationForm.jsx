@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     User, Users, Calendar, Phone, Send, Upload, CheckCircle,
     AlertCircle, Loader2, ArrowRight, ArrowLeft, ChevronDown,
-    Search, Globe, Clock, Sparkles, Check
+    Search, Clock, Sparkles, Check
 } from 'lucide-react';
 import SuccessModal from './SuccessModal';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
@@ -828,18 +828,8 @@ const RegistrationForm = ({ selectedTierId: externalTierId, onSelectPlanTier }) 
                                         )}
                                     </div>
 
-                                    {/* Country & Currency Notice Box */}
-                                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 flex items-center gap-3">
-                                        <Globe className="w-5 h-5 text-brand-red shrink-0" />
-                                        <p className="text-xs text-white/60 leading-relaxed">
-                                            {isDomestic
-                                                ? t('registration.domesticNotice')
-                                                : t('registration.internationalNotice')}
-                                        </p>
-                                    </div>
-
                                     {/* Next: Choose Plan Button */}
-                                    <div className="pt-4">
+                                    <div className="pt-2">
                                         <button
                                             type="button"
                                             onClick={handleNextToPlan}
@@ -870,14 +860,6 @@ const RegistrationForm = ({ selectedTierId: externalTierId, onSelectPlanTier }) 
                                     <p className="text-white/40 text-xs sm:text-sm mt-1.5 leading-relaxed">
                                         {t('registration.step2Desc')}
                                     </p>
-
-                                    {/* Detected Currency Badge */}
-                                    <div className="inline-flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-brand-red/10 border border-brand-red/25 text-white text-xs font-semibold">
-                                        <span>{isDomestic ? '🇪🇹' : '🌍'}</span>
-                                        <span>
-                                            {isDomestic ? t('registration.domesticBadge') : t('registration.internationalBadge')}
-                                        </span>
-                                    </div>
                                 </div>
 
                                 {/* Plan Type Switcher (Individual appears FIRST!) */}
